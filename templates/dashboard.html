@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — NYAAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ease: cubic-bezier(0.16,1,0.3,1);
+      --bg:       #07060f;
+      --bg-2:     #0d0b1a;
+      --bg-3:     #120f22;
+      --surface:  rgba(255,255,255,0.04);
+      --surface-2:rgba(255,255,255,0.07);
+      --border:   rgba(255,255,255,0.08);
+      --border-2: rgba(255,255,255,0.14);
+      --text:     #f0eeff;
+      --text-2:   #a09db8;
+      --text-3:   #635f7a;
+      --accent:   #7c3aed;
+      --accent-2: #9f67ff;
+      --accent-g: rgba(124,58,237,0.3);
+      --green:    #34d399;
+      --green-g:  rgba(52,211,153,0.15);
+      --gold:     #fbbf24;
+      --red:      #f87171;
+      --red-g:    rgba(248,113,113,0.15);
+      --sidebar-w:260px;
+      --shadow:   0 24px 80px rgba(0,0,0,0.5);
+      --shadow-sm:0 4px 24px rgba(0,0,0,0.25);
+    }
+    [data-theme="light"] {
+      --bg:       #faf9ff;
+      --bg-2:     #f3f1ff;
+      --bg-3:     #ede9ff;
+      --surface:  rgba(109,40,217,0.05);
+      --surface-2:rgba(109,40,217,0.09);
+      --border:   rgba(109,40,217,0.12);
+      --border-2: rgba(109,40,217,0.22);
+      --text:     #1a1530;
+      --text-2:   #4a4568;
+      --text-3:   #8b87a8;
+      --accent:   #6d28d9;
+      --accent-2: #7c3aed;
+      --accent-g: rgba(109,40,217,0.18);
+      --green:    #059669;
+      --green-g:  rgba(5,150,105,0.1);
+      --gold:     #d97706;
+      --red:      #dc2626;
+      --red-g:    rgba(220,38,38,0.1);
+      --shadow:   0 24px 80px rgba(109,40,217,0.1);
+      --shadow-sm:0 4px 24px rgba(109,40,217,0.07);
+    }
+
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      background:var(--bg); color:var(--text);
+      font-family:'Geist',system-ui,sans-serif;
+      font-weight:400; line-height:1.6; overflow-x:hidden;
+      transition:background 0.4s var(--ease),color 0.4s var(--ease);
+    }
+
+    /* ── SIDEBAR ─────────────────────────────────────── */
+    .sidebar {
+      position:fixed; top:0; left:0; bottom:0;
+      width:var(--sidebar-w); z-index:100;
+      background:var(--bg-2); border-right:1px solid var(--border);
+      display:flex; flex-direction:column;
+      transition:transform 0.35s var(--ease), background 0.4s;
+    }
+    .sidebar-logo {
+      padding:1.5rem 1.5rem 1rem;
+      border-bottom:1px solid var(--border);
+    }
+    .logo {
+      font-family:'Instrument Serif',serif;
+      font-size:1.6rem; font-weight:400; color:var(--text);
+      text-decoration:none; letter-spacing:-0.01em;
+    }
+    .logo b{color:var(--accent);font-weight:400}
+    .logo-sub{font-size:0.7rem;color:var(--text-3);margin-top:0.1rem;letter-spacing:0.03em}
+
+    .sidebar-nav{flex:1;padding:1rem 0.75rem;overflow-y:auto}
+    .nav-section{margin-bottom:1.75rem}
+    .nav-section-label{
+      font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
+      color:var(--text-3);font-weight:600;padding:0 0.75rem;margin-bottom:0.5rem
+    }
+    .nav-item{
+      display:flex;align-items:center;gap:0.75rem;
+      padding:0.6rem 0.75rem;border-radius:10px;
+      color:var(--text-2);text-decoration:none;
+      font-size:0.875rem;cursor:pointer;
+      transition:all 0.2s;border:1px solid transparent;
+      background:none;width:100%;text-align:left;
+      font-family:'Geist',sans-serif;
+    }
+    .nav-item:hover{color:var(--text);background:var(--surface)}
+    .nav-item.active{
+      color:var(--text);background:var(--surface-2);
+      border-color:var(--border-2);
+    }
+    .nav-item.active .nav-ic{color:var(--accent)}
+    .nav-ic{font-size:1rem;flex-shrink:0;width:20px;text-align:center}
+    .nav-badge{
+      margin-left:auto;background:var(--accent);color:#fff;
+      font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:100px;
+      font-weight:600;
+    }
+
+    .sidebar-bottom{
+      padding:1rem 0.75rem;border-top:1px solid var(--border);
+    }
+    .user-card{
+      display:flex;align-items:center;gap:0.75rem;
+      padding:0.75rem;border-radius:12px;
+      background:var(--surface);border:1px solid var(--border);
+    }
+    .user-avatar{
+      width:36px;height:36px;border-radius:50%;flex-shrink:0;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex;align-items:center;justify-content:center;
+      font-size:0.875rem;font-weight:600;color:#fff;
+    }
+    .user-name{font-size:0.825rem;font-weight:500}
+    .user-role{font-size:0.7rem;color:var(--text-3)}
+
+    /* ── MAIN ────────────────────────────────────────── */
+    .main{
+      margin-left:var(--sidebar-w);
+      min-height:100vh; padding:0;
+      transition:margin-left 0.35s var(--ease);
+    }
+
+    /* ── TOP BAR ─────────────────────────────────────── */
+    .topbar{
+      position:sticky;top:0;z-index:50;
+      background:color-mix(in srgb,var(--bg) 85%,transparent);
+      backdrop-filter:blur(24px) saturate(180%);
+      border-bottom:1px solid var(--border);
+      padding:0.875rem 2rem;
+      display:flex;align-items:center;justify-content:space-between;
+      gap:1rem;
+    }
+    .topbar-left{display:flex;align-items:center;gap:1rem}
+    .topbar-title{
+      font-family:'Instrument Serif',serif;
+      font-size:1.4rem;font-weight:400;letter-spacing:-0.01em;
+    }
+    .topbar-sub{font-size:0.825rem;color:var(--text-3)}
+    .topbar-right{display:flex;align-items:center;gap:0.75rem}
+    .theme-btn{
+      width:38px;height:38px;border-radius:10px;
+      border:1px solid var(--border);background:var(--surface);
+      color:var(--text-2);font-size:0.95rem;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:all 0.2s;
+    }
+    .theme-btn:hover{border-color:var(--border-2);color:var(--text)}
+    .btn-new{
+      display:flex;align-items:center;gap:0.5rem;
+      background:var(--accent);color:#fff;border:none;
+      padding:0.55rem 1.25rem;border-radius:10px;
+      font-size:0.875rem;font-weight:500;cursor:pointer;
+      font-family:'Geist',sans-serif;transition:all 0.25s;
+      box-shadow:0 4px 16px var(--accent-g);
+    }
+    .btn-new:hover{transform:translateY(-1px);box-shadow:0 8px 28px var(--accent-g)}
+    .menu-btn{
+      display:none;background:none;border:1px solid var(--border);
+      color:var(--text);padding:0.5rem;border-radius:8px;cursor:pointer;
+      font-size:1.1rem;
+    }
+
+    /* ── PAGE CONTENT ────────────────────────────────── */
+    .content{padding:2rem}
+
+    /* ── STATS ROW ───────────────────────────────────── */
+    .stats-row{
+      display:grid;grid-template-columns:repeat(4,1fr);
+      gap:1rem;margin-bottom:2rem;
+    }
+    .stat-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:16px;padding:1.5rem;
+      transition:all 0.3s;position:relative;overflow:hidden;
+    }
+    .stat-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent);
+      transform:scaleX(0);transform-origin:center;
+      transition:transform 0.4s var(--ease);
+    }
+    .stat-card:hover{border-color:var(--border-2);transform:translateY(-3px);box-shadow:var(--shadow-sm)}
+    .stat-card:hover::before{transform:scaleX(1)}
+    .stat-icon{
+      width:40px;height:40px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.1rem;margin-bottom:1.1rem;
+    }
+    .stat-icon.purple{background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.2)}
+    .stat-icon.green{background:var(--green-g);border:1px solid rgba(52,211,153,0.2)}
+    .stat-icon.gold{background:rgba(251,191,36,0.12);border:1px solid rgba(251,191,36,0.2)}
+    .stat-icon.red{background:var(--red-g);border:1px solid rgba(248,113,113,0.2)}
+    .stat-num{
+      font-family:'Instrument Serif',serif;
+      font-size:2.25rem;line-height:1;margin-bottom:0.3rem;
+    }
+    .stat-label{font-size:0.8rem;color:var(--text-3)}
+    .stat-change{
+      font-size:0.72rem;margin-top:0.5rem;
+      display:flex;align-items:center;gap:0.3rem;
+    }
+    .stat-change.up{color:var(--green)}
+    .stat-change.neutral{color:var(--text-3)}
+
+    /* ── GRID ────────────────────────────────────────── */
+    .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:1.5rem}
+
+    /* ── CASES TABLE ─────────────────────────────────── */
+    .panel{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:18px;overflow:hidden;
+    }
+    .panel-head{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);
+      flex-wrap:wrap;gap:1rem;
+    }
+    .panel-title{font-size:1rem;font-weight:600}
+    .panel-sub{font-size:0.775rem;color:var(--text-3);margin-top:0.15rem}
+    .panel-actions{display:flex;gap:0.5rem;align-items:center}
+
+    /* Search */
+    .search-wrap{position:relative}
+    .search-ic{
+      position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);
+      color:var(--text-3);font-size:0.875rem;pointer-events:none;
+    }
+    .search-input{
+      background:var(--bg-2);border:1px solid var(--border);
+      border-radius:8px;padding:0.45rem 0.875rem 0.45rem 2.2rem;
+      color:var(--text);font-size:0.825rem;outline:none;width:200px;
+      font-family:'Geist',sans-serif;transition:border-color 0.2s;
+    }
+    .search-input:focus{border-color:var(--accent)}
+    .search-input::placeholder{color:var(--text-3)}
+
+    /* Filter pills */
+    .filter-pills{display:flex;gap:0.4rem;flex-wrap:wrap}
+    .pill{
+      padding:0.3rem 0.875rem;border-radius:100px;
+      font-size:0.75rem;cursor:pointer;
+      border:1px solid var(--border);background:none;
+      color:var(--text-2);transition:all 0.2s;
+      font-family:'Geist',sans-serif;
+    }
+    .pill:hover{border-color:var(--border-2);color:var(--text)}
+    .pill.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+    /* Cases list */
+    .cases-list{padding:0.5rem}
+    .case-item{
+      display:flex;align-items:center;gap:1rem;
+      padding:1rem;border-radius:12px;
+      transition:all 0.2s;cursor:pointer;
+      border:1px solid transparent;
+    }
+    .case-item:hover{background:var(--surface-2);border-color:var(--border)}
+    .case-cat-icon{
+      width:44px;height:44px;border-radius:12px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+      background:var(--bg-3);border:1px solid var(--border);
+    }
+    .case-info{flex:1;min-width:0}
+    .case-title{
+      font-size:0.9rem;font-weight:500;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      margin-bottom:0.25rem;
+    }
+    .case-meta{display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap}
+    .case-date{font-size:0.72rem;color:var(--text-3)}
+    .badge-status{
+      font-size:0.65rem;padding:0.2rem 0.6rem;border-radius:100px;
+      font-weight:500;letter-spacing:0.02em;
+    }
+    .badge-status.draft{background:rgba(100,100,120,0.15);color:var(--text-3);border:1px solid rgba(100,100,120,0.2)}
+    .badge-status.active{background:rgba(124,58,237,0.12);color:var(--accent-2);border:1px solid rgba(124,58,237,0.2)}
+    .badge-status.notice_sent{background:rgba(251,191,36,0.12);color:var(--gold);border:1px solid rgba(251,191,36,0.2)}
+    .badge-status.resolved{background:var(--green-g);color:var(--green);border:1px solid rgba(52,211,153,0.2)}
+    .case-actions{display:flex;gap:0.4rem;flex-shrink:0}
+    .icon-btn{
+      width:32px;height:32px;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:0.875rem;cursor:pointer;
+      border:1px solid var(--border);background:none;
+      color:var(--text-2);transition:all 0.2s;
+    }
+    .icon-btn:hover{border-color:var(--border-2);color:var(--text);background:var(--surface-2)}
+
+    /* Empty state */
+    .empty-state{
+      text-align:center;padding:4rem 2rem;
+    }
+    .empty-icon{font-size:3rem;margin-bottom:1rem;opacity:0.4}
+    .empty-title{font-size:1rem;font-weight:500;margin-bottom:0.5rem}
+    .empty-sub{font-size:0.85rem;color:var(--text-3);margin-bottom:1.5rem}
+    .btn-primary{
+      background:var(--accent);color:#fff;border:none;
+      padding:0.75rem 1.75rem;border-radius:10px;
+      font-size:0.875rem;font-weight:500;cursor:pointer;
+      font-family:'Geist',sans-serif;transition:all 0.25s;
+      display:inline-flex;align-items:center;gap:0.5rem;
+      box-shadow:0 4px 16px var(--accent-g);
+    }
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 28px var(--accent-g)}
+
+    /* ── RIGHT COLUMN ────────────────────────────────── */
+    .right-col{display:flex;flex-direction:column;gap:1.5rem}
+
+    /* Quick start */
+    .quick-start{
+      background:linear-gradient(135deg,rgba(124,58,237,0.15) 0%,rgba(109,40,217,0.08) 100%);
+      border:1px solid rgba(124,58,237,0.25);
+      border-radius:18px;padding:1.5rem;position:relative;overflow:hidden;
+    }
+    .quick-start::before{
+      content:'';position:absolute;top:-40px;right:-40px;
+      width:120px;height:120px;border-radius:50%;
+      background:radial-gradient(circle,rgba(124,58,237,0.2) 0%,transparent 70%);
+      pointer-events:none;
+    }
+    .qs-title{font-size:1rem;font-weight:600;margin-bottom:0.4rem}
+    .qs-sub{font-size:0.8rem;color:var(--text-2);margin-bottom:1.25rem;line-height:1.55}
+    .qs-steps{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1.25rem}
+    .qs-step{
+      display:flex;align-items:center;gap:0.75rem;
+      font-size:0.8rem;color:var(--text-2);
+    }
+    .qs-num{
+      width:22px;height:22px;border-radius:50%;flex-shrink:0;
+      background:var(--accent);color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-size:0.65rem;font-weight:700;
+    }
+
+    /* Recent activity */
+    .activity-list{padding:0.5rem}
+    .activity-item{
+      display:flex;gap:0.875rem;align-items:flex-start;
+      padding:0.875rem;border-radius:10px;
+      transition:background 0.2s;
+    }
+    .activity-item:hover{background:var(--surface-2)}
+    .activity-dot{
+      width:8px;height:8px;border-radius:50%;flex-shrink:0;
+      margin-top:0.4rem;
+    }
+    .activity-dot.purple{background:var(--accent)}
+    .activity-dot.green{background:var(--green)}
+    .activity-dot.gold{background:var(--gold)}
+    .activity-text{font-size:0.825rem;line-height:1.5}
+    .activity-time{font-size:0.7rem;color:var(--text-3);margin-top:0.2rem}
+
+    /* Laws panel */
+    .laws-list{padding:0.75rem}
+    .law-item{
+      display:flex;align-items:center;gap:0.875rem;
+      padding:0.75rem;border-radius:10px;transition:background 0.2s;cursor:pointer;
+    }
+    .law-item:hover{background:var(--surface-2)}
+    .law-ic{
+      width:36px;height:36px;border-radius:9px;flex-shrink:0;
+      background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.15);
+      display:flex;align-items:center;justify-content:center;font-size:0.9rem;
+    }
+    .law-name{font-size:0.825rem;font-weight:500;margin-bottom:0.15rem}
+    .law-desc{font-size:0.72rem;color:var(--text-3)}
+
+    /* ── NEW CASE MODAL ───────────────────────────────── */
+    .overlay{
+      position:fixed;inset:0;z-index:200;
+      background:rgba(0,0,0,0.65);backdrop-filter:blur(10px);
+      display:flex;align-items:center;justify-content:center;padding:1rem;
+      opacity:0;pointer-events:none;transition:opacity 0.3s;
+    }
+    .overlay.on{opacity:1;pointer-events:all}
+    .modal{
+      background:var(--bg-2);border:1px solid var(--border-2);
+      border-radius:22px;padding:2rem;
+      width:100%;max-width:560px;position:relative;
+      transform:scale(0.97) translateY(12px);
+      transition:transform 0.35s var(--ease);
+      max-height:90vh;overflow-y:auto;
+    }
+    .overlay.on .modal{transform:scale(1) translateY(0)}
+    .mx{
+      position:absolute;top:1.25rem;right:1.25rem;
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:8px;width:32px;height:32px;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;color:var(--text-2);font-size:1rem;transition:all 0.2s;
+    }
+    .mx:hover{color:var(--text);background:var(--surface-2)}
+    .modal-title{
+      font-family:'Instrument Serif',serif;
+      font-size:1.5rem;margin-bottom:0.3rem;
+    }
+    .modal-sub{font-size:0.825rem;color:var(--text-3);margin-bottom:1.75rem}
+
+    /* Category grid */
+    .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.625rem;margin-bottom:1.5rem}
+    .cat-btn{
+      padding:0.875rem 0.5rem;border-radius:12px;
+      background:var(--surface);border:1px solid var(--border);
+      color:var(--text-2);cursor:pointer;text-align:center;
+      transition:all 0.2s;font-family:'Geist',sans-serif;
+    }
+    .cat-btn:hover{border-color:var(--border-2);background:var(--surface-2)}
+    .cat-btn.selected{border-color:var(--accent);background:rgba(124,58,237,0.1);color:var(--text)}
+    .cat-btn-ic{font-size:1.25rem;margin-bottom:0.4rem}
+    .cat-btn-t{font-size:0.72rem;font-weight:500}
+
+    /* Form fields */
+    .fg{margin-bottom:1rem}
+    label{display:block;font-size:0.75rem;color:var(--text-2);margin-bottom:0.35rem}
+    input,select,textarea{
+      width:100%;padding:0.7rem 0.9rem;
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:10px;color:var(--text);font-size:0.875rem;
+      font-family:'Geist',sans-serif;outline:none;
+      transition:border-color 0.25s,box-shadow 0.25s;
+      resize:vertical;
+    }
+    input:focus,select:focus,textarea:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(124,58,237,0.12);
+    }
+    input::placeholder,textarea::placeholder{color:var(--text-3)}
+    select option{background:var(--bg-2);color:var(--text)}
+
+    /* Voice btn */
+    .voice-wrap{position:relative}
+    .voice-btn{
+      position:absolute;right:0.75rem;top:50%;transform:translateY(-50%);
+      width:30px;height:30px;border-radius:7px;
+      background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.2);
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;font-size:0.875rem;transition:all 0.2s;
+    }
+    .voice-btn:hover{background:rgba(124,58,237,0.2)}
+    .voice-btn.listening{background:rgba(248,113,113,0.15);border-color:var(--red);animation:voicePulse 1s infinite}
+    @keyframes voicePulse{0%,100%{box-shadow:0 0 0 0 rgba(248,113,113,0.4)}50%{box-shadow:0 0 0 6px rgba(248,113,113,0)}}
+
+    .bsub{
+      width:100%;padding:0.85rem;background:var(--accent);color:#fff;
+      border:none;border-radius:12px;font-size:0.95rem;font-weight:500;
+      cursor:pointer;margin-top:0.5rem;font-family:'Geist',sans-serif;
+      transition:all 0.25s;box-shadow:0 4px 20px var(--accent-g);
+    }
+    .bsub:hover{transform:translateY(-1px);box-shadow:0 8px 32px var(--accent-g)}
+    .bsub:disabled{opacity:0.7;cursor:not-allowed;transform:none}
+    .fmsg{margin-top:0.875rem;padding:0.7rem 0.9rem;border-radius:10px;font-size:0.82rem;display:none}
+    .fmsg.ok{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2);display:block}
+    .fmsg.er{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2);display:block}
+
+    /* ── TOAST NOTIFICATION ──────────────────────────── */
+    .toast{
+      position:fixed;bottom:2rem;right:2rem;z-index:999;
+      padding:0.75rem 1.25rem;border-radius:12px;
+      font-size:0.85rem;font-weight:500;
+      opacity:0;transform:translateY(12px);
+      transition:all 0.3s var(--ease);pointer-events:none;
+      max-width:320px;
+    }
+    .toast.show{opacity:1;transform:translateY(0)}
+    .toast.success{background:rgba(52,211,153,0.15);color:var(--green);border:1px solid rgba(52,211,153,0.3)}
+    .toast.error{background:rgba(248,113,113,0.15);color:var(--red);border:1px solid rgba(248,113,113,0.3)}
+    .toast.info{background:rgba(124,58,237,0.15);color:var(--accent-2);border:1px solid rgba(124,58,237,0.3)}
+
+    /* ── LOADING ─────────────────────────────────────── */
+    .loading-state{
+      display:flex;align-items:center;justify-content:center;
+      padding:3rem;gap:0.75rem;color:var(--text-3);font-size:0.875rem;
+    }
+    .spin{
+      width:20px;height:20px;border-radius:50%;
+      border:2px solid var(--border-2);
+      border-top-color:var(--accent);
+      animation:spin 0.8s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── ANIMATIONS ──────────────────────────────────── */
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+    .reveal{opacity:0;transform:translateY(20px);transition:opacity 0.5s var(--ease),transform 0.5s var(--ease)}
+    .reveal.in{opacity:1;transform:translateY(0)}
+
+    /* ── RESPONSIVE ──────────────────────────────────── */
+    @media(max-width:1200px){
+      .dash-grid{grid-template-columns:1fr}
+      .right-col{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    }
+    @media(max-width:900px){
+      .sidebar{transform:translateX(-100%)}
+      .sidebar.open{transform:translateX(0)}
+      .main{margin-left:0}
+      .menu-btn{display:flex}
+      .stats-row{grid-template-columns:repeat(2,1fr)}
+      .right-col{grid-template-columns:1fr}
+    }
+    @media(max-width:480px){
+      .stats-row{grid-template-columns:1fr 1fr}
+      .cat-grid{grid-template-columns:repeat(4,1fr)}
+      .content{padding:1rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <a href="/" class="logo">NY<b>AA</b>I</a>
+    <div class="logo-sub">Justice for Every Indian</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-label">Main</div>
+      <button class="nav-item active" onclick="setPage('dashboard')">
+        <span class="nav-ic">🏠</span> Dashboard
+      </button>
+      <button class="nav-item" onclick="openNewCase()">
+        <span class="nav-ic">⚖️</span> New Case
+        <span class="nav-badge">+</span>
+      </button>
+      <button class="nav-item" onclick="setPage('cases')">
+        <span class="nav-ic">📋</span> My Cases
+      </button>
+      <button class="nav-item" onclick="setPage('notices')">
+        <span class="nav-ic">📄</span> Legal Notices
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Resources</div>
+      <button class="nav-item" onclick="setPage('laws')">
+        <span class="nav-ic">📚</span> Indian Laws
+      </button>
+      <button class="nav-item" onclick="setPage('forums')">
+        <span class="nav-ic">🏛️</span> Find Forum
+      </button>
+      <button class="nav-item" onclick="setPage('guide')">
+        <span class="nav-ic">❓</span> How to Use
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-label">Account</div>
+      <button class="nav-item" onclick="setPage('profile')">
+        <span class="nav-ic">👤</span> Profile
+      </button>
+      <button class="nav-item" onclick="doLogout()">
+        <span class="nav-ic">🚪</span> Sign Out
+      </button>
+    </div>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar" id="sidebar-avatar">?</div>
+      <div>
+        <div class="user-name" id="sidebar-name">Loading...</div>
+        <div class="user-role">NYAAI Member</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <div>
+        <div class="topbar-title" id="page-title">Dashboard</div>
+        <div class="topbar-sub" id="page-sub">Welcome back. Here's your case overview.</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="theme-btn" id="themeBtn" title="Toggle theme">🌙</button>
+      <button class="btn-new" onclick="openNewCase()">+ New Case</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card reveal">
+        <div class="stat-icon purple">⚖️</div>
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">Total Cases</div>
+        <div class="stat-change neutral">— All time</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-icon purple">🔄</div>
+        <div class="stat-num" id="stat-active">0</div>
+        <div class="stat-label">Active Cases</div>
+        <div class="stat-change up">↑ In progress</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-icon gold">📤</div>
+        <div class="stat-num" id="stat-sent">0</div>
+        <div class="stat-label">Notices Sent</div>
+        <div class="stat-change up">↑ Delivered</div>
+      </div>
+      <div class="stat-card reveal">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-num" id="stat-resolved">0</div>
+        <div class="stat-label">Resolved</div>
+        <div class="stat-change up">↑ Justice served</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="dash-grid">
+
+      <!-- CASES PANEL -->
+      <div>
+        <div class="panel reveal">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">My Cases</div>
+              <div class="panel-sub">Click any case to view details</div>
+            </div>
+            <div class="panel-actions">
+              <div class="search-wrap">
+                <span class="search-ic">🔍</span>
+                <input class="search-input" placeholder="Search cases..." id="case-search" oninput="filterCases()"/>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:0.75rem 1rem 0.5rem;border-bottom:1px solid var(--border)">
+            <div class="filter-pills" id="filter-pills">
+              <button class="pill active" onclick="setFilter('all',this)">All</button>
+              <button class="pill" onclick="setFilter('draft',this)">Draft</button>
+              <button class="pill" onclick="setFilter('active',this)">Active</button>
+              <button class="pill" onclick="setFilter('notice_sent',this)">Notice Sent</button>
+              <button class="pill" onclick="setFilter('resolved',this)">Resolved</button>
+            </div>
+          </div>
+
+          <div class="cases-list" id="cases-list">
+            <div class="loading-state"><div class="spin"></div> Loading your cases...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+
+        <!-- QUICK START -->
+        <div class="quick-start reveal">
+          <div class="qs-title">⚡ Start a New Case</div>
+          <div class="qs-sub">Get your legal notice ready in under 2 minutes — completely free.</div>
+          <div class="qs-steps">
+            <div class="qs-step"><div class="qs-num">1</div> Describe your problem</div>
+            <div class="qs-step"><div class="qs-num">2</div> AI identifies the law</div>
+            <div class="qs-step"><div class="qs-num">3</div> Download legal notice PDF</div>
+          </div>
+          <button class="btn-primary" style="width:100%;justify-content:center" onclick="openNewCase()">
+            ⚖️ File New Case
+          </button>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <div class="panel reveal">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Recent Activity</div>
+            </div>
+          </div>
+          <div class="activity-list" id="activity-list">
+            <div class="loading-state" style="padding:2rem"><div class="spin"></div></div>
+          </div>
+        </div>
+
+        <!-- KNOW YOUR LAWS -->
+        <div class="panel reveal">
+          <div class="panel-head">
+            <div>
+              <div class="panel-title">Know Your Rights</div>
+              <div class="panel-sub">Key Indian laws that protect you</div>
+            </div>
+          </div>
+          <div class="laws-list">
+            <div class="law-item"><div class="law-ic">🛒</div><div><div class="law-name">Consumer Protection Act 2019</div><div class="law-desc">Protects against defective goods & services</div></div></div>
+            <div class="law-item"><div class="law-ic">💻</div><div><div class="law-name">IT Act 2000</div><div class="law-desc">Covers online fraud & data theft</div></div></div>
+            <div class="law-item"><div class="law-ic">💰</div><div><div class="law-name">Payment of Wages Act</div><div class="law-desc">Ensures timely salary payment</div></div></div>
+            <div class="law-item"><div class="law-ic">🏠</div><div><div class="law-name">Rent Control Act</div><div class="law-desc">Protects tenant rights</div></div></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- NEW CASE MODAL -->
+<div class="overlay" id="overlay" onclick="outsideClose(event)">
+  <div class="modal">
+    <button class="mx" onclick="closeModal()">✕</button>
+    <div class="modal-title">File a New Case</div>
+    <p class="modal-sub">Describe your problem — NYAAI will identify the law and generate your legal notice.</p>
+
+    <!-- Category select -->
+    <div class="fg">
+      <label>What type of problem? (tap to select)</label>
+      <div class="cat-grid" id="cat-grid">
+        <div class="cat-btn" onclick="selectCat('landlord',this)"><div class="cat-btn-ic">🏠</div><div class="cat-btn-t">Landlord</div></div>
+        <div class="cat-btn" onclick="selectCat('shopping',this)"><div class="cat-btn-ic">🛒</div><div class="cat-btn-t">Shopping</div></div>
+        <div class="cat-btn" onclick="selectCat('salary',this)"><div class="cat-btn-ic">💰</div><div class="cat-btn-t">Salary</div></div>
+        <div class="cat-btn" onclick="selectCat('bank',this)"><div class="cat-btn-ic">🏦</div><div class="cat-btn-t">Bank</div></div>
+        <div class="cat-btn" onclick="selectCat('medical',this)"><div class="cat-btn-ic">🏥</div><div class="cat-btn-t">Medical</div></div>
+        <div class="cat-btn" onclick="selectCat('telecom',this)"><div class="cat-btn-ic">📱</div><div class="cat-btn-t">Telecom</div></div>
+        <div class="cat-btn" onclick="selectCat('service',this)"><div class="cat-btn-ic">🔧</div><div class="cat-btn-t">Service</div></div>
+        <div class="cat-btn" onclick="selectCat('other',this)"><div class="cat-btn-ic">📦</div><div class="cat-btn-t">Other</div></div>
+      </div>
+      <input type="hidden" id="c-cat" value=""/>
+    </div>
+
+    <div class="fg">
+      <label>Case Title (short summary)</label>
+      <input id="c-title" type="text" placeholder="e.g. Landlord not returning security deposit"/>
+    </div>
+
+    <div class="fg">
+      <label>Describe your problem in detail</label>
+      <div class="voice-wrap">
+        <textarea id="c-desc" rows="5" placeholder="Tell us exactly what happened. Include dates, amounts, names of companies/people involved. The more detail, the better your legal notice will be..."></textarea>
+        <button class="voice-btn" id="voice-btn" onclick="toggleVoice()" title="Speak your problem">🎤</button>
+      </div>
+    </div>
+
+    <div class="fg">
+      <label>Language</label>
+      <select id="c-lang">
+        <option value="en">English</option>
+        <option value="hi">Hindi</option>
+        <option value="ta">Tamil</option>
+        <option value="te">Telugu</option>
+        <option value="bn">Bengali</option>
+        <option value="mr">Marathi</option>
+      </select>
+    </div>
+
+    <button class="bsub" id="c-btn" onclick="submitCase()">⚖️ Analyse My Case with AI</button>
+    <div class="fmsg" id="c-msg"></div>
+  </div>
+</div>
+
+<script>
+  // ── THEME ──────────────────────────────────────────────
+  const html = document.documentElement;
+  const tBtn = document.getElementById('themeBtn');
+  const saved = localStorage.getItem('nyaai-theme') || 'dark';
+  applyTheme(saved);
+  function applyTheme(t) {
+    html.setAttribute('data-theme', t);
+    tBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('nyaai-theme', t);
+  }
+  tBtn.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+  // ── AUTH CHECK ─────────────────────────────────────────
+  const token = localStorage.getItem('access_token');
+  const user  = JSON.parse(localStorage.getItem('user') || '{}');
+
+  if (!token) {
+    window.location.href = '/';
+  } else {
+    const name = user.name || user.username || 'User';
+    document.getElementById('sidebar-name').textContent = name;
+    document.getElementById('sidebar-avatar').textContent = name.charAt(0).toUpperCase();
+  }
+
+  // ── TOAST ──────────────────────────────────────────────
+  let toastTimer = null;
+  function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3500);
+  }
+
+  // ── SIDEBAR TOGGLE ─────────────────────────────────────
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  // ── PAGE NAVIGATION ────────────────────────────────────
+  function setPage(page) {
+    const titles = {
+      dashboard: ['Dashboard', 'Welcome back. Here\'s your case overview.'],
+      cases:     ['My Cases', 'All your legal cases in one place.'],
+      notices:   ['Legal Notices', 'All generated legal notices.'],
+      laws:      ['Indian Laws', 'Know the laws that protect you.'],
+      forums:    ['Find Forum', 'Locate consumer forums near you.'],
+      guide:     ['How to Use', 'Step by step guide to using NYAAI.'],
+      profile:   ['My Profile', 'Manage your account details.'],
+    };
+    const [title, sub] = titles[page] || ['Dashboard', ''];
+    document.getElementById('page-title').textContent = title;
+    document.getElementById('page-sub').textContent   = sub;
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    document.getElementById('sidebar').classList.remove('open');
+  }
+
+  // ── SCROLL REVEAL ──────────────────────────────────────
+  const ro = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) setTimeout(() => e.target.classList.add('in'), i * 80);
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+  // ── LOAD STATS ─────────────────────────────────────────
+  async function loadStats() {
+    try {
+      const res = await fetch('/api/auth/stats/', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const d = await res.json();
+      if (d.success) {
+        animateNum('stat-total',    d.stats.total_cases);
+        animateNum('stat-active',   d.stats.active_cases);
+        animateNum('stat-sent',     d.stats.notices_sent);
+        animateNum('stat-resolved', d.stats.resolved_cases);
+      }
+    } catch(e) {
+      console.log('Stats load error:', e);
+    }
+  }
+
+  function animateNum(id, end) {
+    const el = document.getElementById(id);
+    let n = 0; const step = Math.max(end / 40, 0.5);
+    const t = setInterval(() => {
+      n += step;
+      if (n >= end) { el.textContent = end; clearInterval(t); }
+      else el.textContent = Math.floor(n);
+    }, 30);
+  }
+
+  // ── LOAD CASES ─────────────────────────────────────────
+  let allCases = [];
+  let currentFilter = 'all';
+
+  const CAT_ICONS = {
+    landlord:'🏠', shopping:'🛒', salary:'💰', bank:'🏦',
+    medical:'🏥', telecom:'📱', service:'🔧', product:'📦', other:'⚖️'
+  };
+
+  async function loadCases() {
+    try {
+      const res = await fetch('/api/cases/', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const d = await res.json();
+      allCases = d.results || d || [];
+      renderCases();
+      renderActivity();
+    } catch(e) {
+      document.getElementById('cases-list').innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⚠️</div>
+          <div class="empty-title">Could not load cases</div>
+          <div class="empty-sub">Make sure the server is running</div>
+        </div>`;
+    }
+  }
+
+  function renderCases() {
+    const list = document.getElementById('cases-list');
+    const search = document.getElementById('case-search').value.toLowerCase();
+    let filtered = allCases.filter(c => {
+      const matchFilter = currentFilter === 'all' || c.status === currentFilter;
+      const matchSearch = !search || c.title.toLowerCase().includes(search) || c.description.toLowerCase().includes(search);
+      return matchFilter && matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">⚖️</div>
+          <div class="empty-title">No cases yet</div>
+          <div class="empty-sub">File your first case and NYAAI will identify the law and generate your legal notice.</div>
+          <button class="btn-primary" onclick="openNewCase()">⚖️ File First Case</button>
+        </div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map(c => `
+      <div class="case-item">
+        <div class="case-cat-icon">${CAT_ICONS[c.category] || '⚖️'}</div>
+        <div class="case-info">
+          <div class="case-title">${c.title}</div>
+          <div class="case-meta">
+            <span class="case-date">${formatDate(c.created_at)}</span>
+            <span class="badge-status ${c.status}">${formatStatus(c.status)}</span>
+          </div>
+        </div>
+        <div class="case-actions">
+          <button class="icon-btn" title="View case" onclick="viewCase(${c.id})">👁</button>
+          <button class="icon-btn" title="Download Legal Notice PDF" onclick="downloadNotice(event, ${c.id})">📄</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderActivity() {
+    const actList = document.getElementById('activity-list');
+    if (allCases.length === 0) {
+      actList.innerHTML = `<div style="padding:1.5rem;text-align:center;font-size:0.825rem;color:var(--text-3)">No activity yet. File your first case!</div>`;
+      return;
+    }
+    const recent = allCases.slice(0, 4);
+    actList.innerHTML = recent.map(c => `
+      <div class="activity-item">
+        <div class="activity-dot ${c.status === 'resolved' ? 'green' : c.status === 'notice_sent' ? 'gold' : 'purple'}"></div>
+        <div>
+          <div class="activity-text">${getActivityText(c)}</div>
+          <div class="activity-time">${formatDate(c.updated_at)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function getActivityText(c) {
+    if (c.status === 'resolved') return `✅ Case resolved: "${c.title.substring(0,40)}..."`;
+    if (c.status === 'notice_sent') return `📤 Notice sent for: "${c.title.substring(0,35)}..."`;
+    if (c.status === 'active') return `🔄 Case active: "${c.title.substring(0,40)}..."`;
+    return `📋 Case created: "${c.title.substring(0,40)}..."`;
+  }
+
+  function formatDate(d) {
+    return new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+  }
+
+  function formatStatus(s) {
+    const m = { draft:'Draft', active:'Active', notice_sent:'Notice Sent', resolved:'Resolved', closed:'Closed' };
+    return m[s] || s;
+  }
+
+  function setFilter(f, el) {
+    currentFilter = f;
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    renderCases();
+  }
+
+  function filterCases() { renderCases(); }
+
+  function viewCase(id) {
+    window.location.href = `/case/${id}/`;
+  }
+
+  // ── DOWNLOAD LEGAL NOTICE ──────────────────────────────
+  async function downloadNotice(event, caseId) {
+    // Stop the click from bubbling up to the case-item (which triggers viewCase)
+    event.stopPropagation();
+
+    const btn = event.currentTarget;
+    const originalText = btn.textContent;
+
+    // Show loading state on button
+    btn.textContent = '⏳';
+    btn.disabled = true;
+    btn.style.opacity = '0.6';
+
+    showToast('Generating Legal Notice PDF...', 'info');
+
+    try {
+      const response = await fetch(`/api/documents/download/${caseId}/`, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+        },
+      });
+
+      if (!response.ok) {
+        // Try to parse error message from JSON response
+        let errMsg = 'Failed to generate PDF.';
+        try {
+          const errData = await response.json();
+          errMsg = errData.error || errMsg;
+        } catch (_) {}
+        showToast('❌ ' + errMsg, 'error');
+        return;
+      }
+
+      // Get filename from Content-Disposition header if available
+      const disposition = response.headers.get('Content-Disposition');
+      let filename = `legal_notice_case_${caseId}.pdf`;
+      if (disposition && disposition.includes('filename=')) {
+        const match = disposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+        if (match && match[1]) filename = match[1].replace(/['"]/g, '');
+      }
+
+      // Convert response to blob and trigger browser download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      showToast('✅ Legal Notice PDF downloaded!', 'success');
+
+    } catch (err) {
+      console.error('Download error:', err);
+      showToast('❌ Could not connect to server.', 'error');
+    } finally {
+      // Restore button state
+      btn.textContent = originalText;
+      btn.disabled = false;
+      btn.style.opacity = '';
+    }
+  }
+
+  // ── NEW CASE MODAL ──────────────────────────────────────
+  let selectedCat = '';
+
+  function openNewCase() {
+    document.getElementById('overlay').classList.add('on');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('overlay').classList.remove('on');
+    document.body.style.overflow = '';
+  }
+  function outsideClose(e) { if (e.target.id === 'overlay') closeModal(); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  function selectCat(cat, el) {
+    selectedCat = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('c-cat').value = cat;
+  }
+
+  // ── VOICE INPUT ────────────────────────────────────────
+  let recognition = null;
+  let isListening = false;
+
+  function toggleVoice() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      alert('Voice input is not supported in your browser. Please use Chrome.');
+      return;
+    }
+    if (isListening) {
+      recognition.stop(); return;
+    }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = document.getElementById('c-lang').value === 'hi' ? 'hi-IN' : 'en-IN';
+
+    recognition.onstart = () => {
+      isListening = true;
+      document.getElementById('voice-btn').classList.add('listening');
+      document.getElementById('voice-btn').textContent = '⏹';
+    };
+    recognition.onresult = e => {
+      const transcript = Array.from(e.results).map(r => r[0].transcript).join('');
+      document.getElementById('c-desc').value = transcript;
+    };
+    recognition.onend = () => {
+      isListening = false;
+      document.getElementById('voice-btn').classList.remove('listening');
+      document.getElementById('voice-btn').textContent = '🎤';
+    };
+    recognition.start();
+  }
+
+  // ── SUBMIT CASE ────────────────────────────────────────
+  async function submitCase() {
+    const btn = document.getElementById('c-btn');
+    const msg = document.getElementById('c-msg');
+    const title = document.getElementById('c-title').value.trim();
+    const desc  = document.getElementById('c-desc').value.trim();
+
+    if (!title) { showMsg('er', '❌ Please enter a case title.'); return; }
+    if (!desc)  { showMsg('er', '❌ Please describe your problem.'); return; }
+    if (!selectedCat) { showMsg('er', '❌ Please select a problem category.'); return; }
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Analysing with AI...';
+    msg.className = 'fmsg';
+
+    try {
+      const res = await fetch('/api/cases/create/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token,
+        },
+        body: JSON.stringify({
+          title,
+          description: desc,
+          category:    selectedCat,
+          language:    document.getElementById('c-lang').value,
+        }),
+      });
+      const d = await res.json();
+      if (d.id || d.success) {
+        showMsg('ok', '✅ Case created! AI is analysing your case now...');
+        setTimeout(() => {
+          closeModal();
+          loadCases();
+          loadStats();
+        }, 1500);
+        // Reset form
+        document.getElementById('c-title').value = '';
+        document.getElementById('c-desc').value  = '';
+        selectedCat = '';
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('selected'));
+      } else {
+        showMsg('er', '❌ ' + (d.message || d.detail || 'Something went wrong.'));
+      }
+    } catch(e) {
+      showMsg('er', '❌ Could not connect to server. Make sure Django is running.');
+    }
+    btn.disabled = false;
+    btn.textContent = '⚖️ Analyse My Case with AI';
+  }
+
+  function showMsg(type, text) {
+    const msg = document.getElementById('c-msg');
+    msg.textContent = text;
+    msg.className = 'fmsg ' + type;
+  }
+
+  // ── LOGOUT ─────────────────────────────────────────────
+  function doLogout() {
+    const refresh = localStorage.getItem('refresh_token');
+    if (refresh) {
+      fetch('/api/auth/logout/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ refresh }),
+      }).catch(() => {});
+    }
+    localStorage.clear();
+    window.location.href = '/';
+  }
+
+  // ── INIT ───────────────────────────────────────────────
+  loadStats();
+  loadCases();
+</script>
+</body>
+</html>

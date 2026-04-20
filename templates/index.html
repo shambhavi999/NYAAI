@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NYAAI — Justice for Every Indian</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --bg:        #07060f;
+      --bg-2:      #0d0b1a;
+      --surface:   rgba(255,255,255,0.04);
+      --surface-2: rgba(255,255,255,0.07);
+      --border:    rgba(255,255,255,0.08);
+      --border-2:  rgba(255,255,255,0.14);
+      --text:      #f0eeff;
+      --text-2:    #a09db8;
+      --text-3:    #635f7a;
+      --accent:    #7c3aed;
+      --accent-2:  #9f67ff;
+      --accent-g:  rgba(124,58,237,0.3);
+      --green:     #34d399;
+      --gold:      #fbbf24;
+      --shadow:    0 24px 80px rgba(0,0,0,0.5);
+      --shadow-sm: 0 4px 24px rgba(0,0,0,0.25);
+    }
+    [data-theme="light"] {
+      --bg:        #faf9ff;
+      --bg-2:      #f3f1ff;
+      --surface:   rgba(109,40,217,0.05);
+      --surface-2: rgba(109,40,217,0.09);
+      --border:    rgba(109,40,217,0.12);
+      --border-2:  rgba(109,40,217,0.22);
+      --text:      #1a1530;
+      --text-2:    #4a4568;
+      --text-3:    #8b87a8;
+      --accent:    #6d28d9;
+      --accent-2:  #7c3aed;
+      --accent-g:  rgba(109,40,217,0.18);
+      --green:     #059669;
+      --gold:      #d97706;
+      --shadow:    0 24px 80px rgba(109,40,217,0.1);
+      --shadow-sm: 0 4px 24px rgba(109,40,217,0.07);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Geist', system-ui, sans-serif;
+      font-weight: 400; line-height: 1.6; overflow-x: hidden;
+      transition: background 0.4s var(--ease), color 0.4s var(--ease);
+    }
+
+    .bg-grad {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 55% at 15% -5%, rgba(124,58,237,0.09) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 45% at 85% 105%, rgba(109,40,217,0.07) 0%, transparent 60%);
+    }
+    [data-theme="light"] .bg-grad {
+      background:
+        radial-gradient(ellipse 80% 55% at 15% -5%, rgba(124,58,237,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 45% at 85% 105%, rgba(109,40,217,0.04) 0%, transparent 60%);
+    }
+
+    #cvs { position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.45; }
+
+    .wrap { max-width:1160px; margin:0 auto; padding:0 2rem; position:relative; z-index:2; }
+
+    /* NAV */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:100;
+      padding:1.1rem 0; transition:all 0.4s var(--ease);
+    }
+    nav.stuck {
+      background: color-mix(in srgb, var(--bg) 88%, transparent);
+      backdrop-filter: blur(24px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+      padding: 0.8rem 0;
+    }
+    .nav-row { display:flex; align-items:center; justify-content:space-between; }
+    .logo {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 1.75rem; font-weight:400;
+      color: var(--text); text-decoration:none; letter-spacing:-0.01em;
+    }
+    .logo b { color: var(--accent); font-weight:400; }
+    .nav-links { display:flex; gap:0.25rem; }
+    .nav-link {
+      color:var(--text-2); text-decoration:none; font-size:0.875rem;
+      padding:0.45rem 0.875rem; border-radius:8px; transition:all 0.2s;
+    }
+    .nav-link:hover { color:var(--text); background:var(--surface); }
+    .nav-right { display:flex; align-items:center; gap:0.75rem; }
+    .theme-btn {
+      width:40px; height:40px; border-radius:10px; border:1px solid var(--border);
+      background:var(--surface); color:var(--text-2); font-size:1rem;
+      cursor:pointer; display:flex; align-items:center; justify-content:center;
+      transition:all 0.2s;
+    }
+    .theme-btn:hover { border-color:var(--border-2); color:var(--text); }
+    .btn-nav {
+      background:var(--accent); color:#fff; border:none;
+      padding:0.5rem 1.25rem; border-radius:10px; font-size:0.875rem;
+      font-weight:500; cursor:pointer; font-family:'Geist',sans-serif;
+      transition:all 0.25s; box-shadow:0 4px 16px var(--accent-g);
+    }
+    .btn-nav:hover { transform:translateY(-1px); box-shadow:0 8px 28px var(--accent-g); }
+
+    /* HERO */
+    .hero { min-height:100vh; display:flex; align-items:center; padding:9rem 0 5rem; }
+    .hero-grid { display:grid; grid-template-columns:1fr 0.88fr; gap:5rem; align-items:center; }
+    .badge {
+      display:inline-flex; align-items:center; gap:0.5rem;
+      background:var(--surface); border:1px solid var(--border-2);
+      border-radius:100px; padding:0.35rem 1rem;
+      font-size:0.775rem; color:var(--text-2); letter-spacing:0.04em;
+      margin-bottom:1.75rem; animation:fadeUp 0.7s var(--ease) both;
+    }
+    .bdot {
+      width:6px; height:6px; border-radius:50%; background:var(--green);
+      box-shadow:0 0 6px var(--green); animation:blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+    h1 {
+      font-family:'Instrument Serif',Georgia,serif;
+      font-size:clamp(3.2rem,5.5vw,5rem); font-weight:400;
+      line-height:1.06; letter-spacing:-0.025em;
+      animation:fadeUp 0.7s 0.06s var(--ease) both;
+    }
+    h1 em { font-style:italic; color:var(--accent-2); }
+    .underline { position:relative; display:inline-block; }
+    .underline::after {
+      content:''; position:absolute; bottom:4px; left:0; right:0;
+      height:3px; border-radius:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      transform:scaleX(0); transform-origin:left;
+      animation:scaleIn 0.8s 0.65s var(--ease) forwards;
+    }
+    @keyframes scaleIn { to{transform:scaleX(1)} }
+
+    .hero-p {
+      margin-top:1.5rem; color:var(--text-2); font-size:1.05rem;
+      line-height:1.78; max-width:490px;
+      animation:fadeUp 0.7s 0.12s var(--ease) both;
+    }
+    .hero-p strong { color:var(--text); font-weight:500; }
+    .hero-btns { display:flex; gap:0.875rem; margin-top:2.5rem; flex-wrap:wrap; animation:fadeUp 0.7s 0.18s var(--ease) both; }
+    .btn-primary {
+      background:var(--accent); color:#fff; border:none;
+      padding:0.875rem 2rem; border-radius:12px; font-size:0.95rem;
+      font-weight:500; cursor:pointer; font-family:'Geist',sans-serif;
+      display:inline-flex; align-items:center; gap:0.6rem;
+      transition:all 0.25s; text-decoration:none;
+      box-shadow:0 4px 24px var(--accent-g);
+    }
+    .btn-primary:hover { transform:translateY(-2px); box-shadow:0 12px 40px var(--accent-g); }
+    .btn-ghost {
+      background:var(--surface); color:var(--text); border:1px solid var(--border-2);
+      padding:0.875rem 2rem; border-radius:12px; font-size:0.95rem;
+      font-weight:400; cursor:pointer; font-family:'Geist',sans-serif;
+      display:inline-flex; align-items:center; gap:0.6rem;
+      transition:all 0.25s; text-decoration:none;
+    }
+    .btn-ghost:hover { background:var(--surface-2); transform:translateY(-2px); }
+
+    .hero-stats {
+      display:flex; gap:2.25rem; margin-top:3rem; flex-wrap:wrap;
+      animation:fadeUp 0.7s 0.24s var(--ease) both;
+    }
+    .sn { font-family:'Instrument Serif',serif; font-size:2.25rem; line-height:1; }
+    .sl { font-size:0.77rem; color:var(--text-3); margin-top:0.2rem; }
+    .ssep { width:1px; background:var(--border); align-self:stretch; }
+
+    /* Hero card */
+    .hcard {
+      background:var(--surface); border:1px solid var(--border-2);
+      border-radius:20px; padding:1.75rem;
+      box-shadow:var(--shadow-sm); position:relative;
+      animation:fadeUp 0.7s 0.1s var(--ease) both;
+    }
+    .hcard::before {
+      content:''; position:absolute; inset:-1px; border-radius:21px;
+      background:linear-gradient(145deg,rgba(124,58,237,0.25) 0%,transparent 55%);
+      z-index:-1; opacity:0.6;
+    }
+    .chip {
+      display:inline-flex; align-items:center; gap:0.4rem;
+      background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.2);
+      border-radius:6px; padding:0.25rem 0.625rem;
+      font-size:0.68rem; color:var(--accent-2);
+      letter-spacing:0.07em; text-transform:uppercase; margin-bottom:1.1rem;
+    }
+    .cproblem {
+      font-size:0.9rem; color:var(--text-2); line-height:1.65;
+      padding:1rem; background:var(--surface-2); border-radius:12px;
+      border:1px solid var(--border); margin-bottom:1.25rem; font-style:italic;
+    }
+    .cproblem span { color:var(--text); font-style:normal; font-weight:500; }
+    .analyzing { display:flex; align-items:center; gap:0.6rem; font-size:0.77rem; color:var(--accent-2); margin-bottom:1.1rem; }
+    .adots { display:flex; gap:3px; }
+    .adots span { width:4px; height:4px; border-radius:50%; background:var(--accent-2); animation:bounce 1.2s infinite; }
+    .adots span:nth-child(2){animation-delay:0.15s}
+    .adots span:nth-child(3){animation-delay:0.3s}
+    @keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+
+    .res {
+      display:flex; gap:0.75rem; align-items:flex-start;
+      padding:0.875rem; border-radius:12px;
+      border:1px solid var(--border); background:var(--surface);
+      margin-bottom:0.6rem; transition:border-color 0.3s;
+    }
+    .res:hover { border-color:var(--border-2); }
+    .res-ic {
+      width:36px; height:36px; border-radius:9px; flex-shrink:0;
+      background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.2);
+      display:flex; align-items:center; justify-content:center; font-size:0.95rem;
+    }
+    .res-t { font-size:0.8rem; font-weight:500; margin-bottom:0.2rem; }
+    .res-d { font-size:0.72rem; color:var(--text-3); line-height:1.4; }
+
+    /* TICKER */
+    .ticker {
+      border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+      padding:0.875rem 0; overflow:hidden; background:var(--surface);
+      position:relative; z-index:2;
+    }
+    .ttrack { display:flex; gap:2.5rem; animation:ticker 35s linear infinite; width:max-content; }
+    .titem {
+      display:flex; align-items:center; gap:0.6rem;
+      font-size:0.775rem; color:var(--text-3);
+      letter-spacing:0.04em; text-transform:uppercase; white-space:nowrap; flex-shrink:0;
+    }
+    .titem i { color:var(--accent); font-style:normal; }
+    @keyframes ticker { to{transform:translateX(-50%)} }
+
+    /* SECTIONS */
+    section { padding:7rem 0; position:relative; z-index:2; }
+    .eyebrow {
+      font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase;
+      color:var(--accent); font-weight:600; margin-bottom:0.875rem;
+    }
+    .sh2 {
+      font-family:'Instrument Serif',serif;
+      font-size:clamp(2rem,3.5vw,2.75rem); font-weight:400;
+      line-height:1.15; letter-spacing:-0.02em;
+    }
+    .sh2 em { font-style:italic; color:var(--accent-2); }
+    .sp { color:var(--text-2); font-size:1rem; line-height:1.75; margin-top:1rem; max-width:520px; }
+
+    /* STEPS */
+    .steps { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:4rem; }
+    .step {
+      padding:2rem; border-radius:18px; background:var(--surface);
+      border:1px solid var(--border); transition:all 0.35s var(--ease); position:relative; overflow:hidden;
+    }
+    .step::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:2px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent);
+      transform:scaleX(0); transform-origin:center; transition:transform 0.4s var(--ease);
+    }
+    .step:hover { transform:translateY(-6px); border-color:var(--border-2); box-shadow:var(--shadow-sm); }
+    .step:hover::before { transform:scaleX(1); }
+    .step-no { font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:1.25rem; }
+    .step-ic {
+      width:52px; height:52px; border-radius:14px;
+      background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.18);
+      display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:1.25rem;
+    }
+    .step-h { font-size:1.05rem; font-weight:600; margin-bottom:0.6rem; }
+    .step-p { font-size:0.875rem; color:var(--text-2); line-height:1.7; }
+
+    /* CATS */
+    .bg2 { background:var(--bg-2); }
+    .cats-top { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:3rem; flex-wrap:wrap; gap:2rem; }
+    .cats { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; }
+    .cat {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:16px; padding:1.5rem; cursor:pointer;
+      transition:all 0.3s var(--ease); position:relative; overflow:hidden;
+    }
+    .cat:hover { border-color:var(--border-2); background:var(--surface-2); transform:translateY(-3px); box-shadow:var(--shadow-sm); }
+    .cat-em { font-size:1.75rem; margin-bottom:0.875rem; }
+    .cat-h { font-size:0.925rem; font-weight:600; margin-bottom:0.35rem; }
+    .cat-p { font-size:0.78rem; color:var(--text-3); line-height:1.55; }
+    .cat-arr { position:absolute; top:1.1rem; right:1.1rem; font-size:0.8rem; color:var(--text-3); opacity:0; transition:all 0.25s; }
+    .cat:hover .cat-arr { opacity:1; transform:translate(2px,-2px); }
+
+    /* FEATURES */
+    .fg { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; margin-top:5rem; }
+    .fg.rev { direction:rtl; }
+    .fg.rev > * { direction:ltr; }
+    .fvis {
+      background:var(--surface); border:1px solid var(--border-2);
+      border-radius:20px; padding:2rem; box-shadow:var(--shadow-sm); position:relative;
+    }
+    .fvis::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:1px; border-radius:20px 20px 0 0;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    }
+    .fitems { display:flex; flex-direction:column; gap:1.5rem; }
+    .fi { display:flex; gap:1rem; }
+    .fi-ic {
+      width:44px; height:44px; border-radius:12px; flex-shrink:0;
+      background:rgba(124,58,237,0.1); border:1px solid rgba(124,58,237,0.18);
+      display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+    }
+    .fi-h { font-size:0.975rem; font-weight:600; margin-bottom:0.3rem; }
+    .fi-p { font-size:0.85rem; color:var(--text-2); line-height:1.65; }
+
+    /* TESTIS */
+    .tgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.25rem; margin-top:4rem; }
+    .tcard {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:18px; padding:1.75rem; transition:all 0.3s;
+      display:flex; flex-direction:column;
+    }
+    .tcard:hover { border-color:var(--border-2); transform:translateY(-4px); box-shadow:var(--shadow-sm); }
+    .tq { font-family:'Instrument Serif',serif; font-size:3rem; color:var(--accent); line-height:0.8; margin-bottom:1rem; opacity:0.55; }
+    .tt { font-size:0.9rem; color:var(--text-2); line-height:1.75; flex:1; margin-bottom:1.5rem; }
+    .ta { display:flex; gap:0.75rem; align-items:center; }
+    .tav {
+      width:38px; height:38px; border-radius:50%; flex-shrink:0;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.9rem; font-weight:600; color:#fff;
+    }
+    .tn { font-size:0.875rem; font-weight:500; }
+    .tr { font-size:0.73rem; color:var(--text-3); }
+    .ts { color:var(--gold); font-size:0.72rem; margin-bottom:0.2rem; }
+
+    /* LANGS */
+    .lwrap { display:flex; flex-wrap:wrap; gap:0.75rem; margin-top:3rem; }
+    .lang {
+      display:flex; align-items:center; gap:0.6rem;
+      padding:0.6rem 1.25rem; border-radius:100px;
+      background:var(--surface); border:1px solid var(--border);
+      font-size:0.875rem; cursor:pointer; transition:all 0.25s;
+    }
+    .lang:hover { border-color:var(--border-2); background:var(--surface-2); transform:translateY(-2px); }
+
+    /* CTA */
+    .cta-box {
+      background:var(--bg-2); border:1px solid var(--border-2);
+      border-radius:28px; padding:6rem 4rem; text-align:center; position:relative; overflow:hidden;
+    }
+    .cta-box::before {
+      content:''; position:absolute;
+      width:600px; height:600px; border-radius:50%;
+      background:radial-gradient(circle,rgba(124,58,237,0.07) 0%,transparent 70%);
+      top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none;
+    }
+    .cta-box::after {
+      content:''; position:absolute; top:0; left:0; right:0; height:1px;
+      background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    }
+    .cta-h {
+      font-family:'Instrument Serif',serif;
+      font-size:clamp(2.2rem,4vw,3.5rem); font-weight:400;
+      line-height:1.15; letter-spacing:-0.02em; margin-bottom:1.25rem; position:relative; z-index:1;
+    }
+    .cta-h em { font-style:italic; color:var(--accent-2); }
+    .cta-p { color:var(--text-2); font-size:1.05rem; max-width:480px; margin:0 auto 2.5rem; line-height:1.75; position:relative; z-index:1; }
+    .cta-btns { display:flex; gap:0.875rem; justify-content:center; flex-wrap:wrap; position:relative; z-index:1; }
+    .cta-note { margin-top:1.25rem; font-size:0.78rem; color:var(--text-3); position:relative; z-index:1; }
+
+    /* FOOTER */
+    footer { border-top:1px solid var(--border); padding:4rem 0 2rem; position:relative; z-index:2; }
+    .fgrid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:3rem; margin-bottom:3rem; }
+    .fbrand-p { font-size:0.875rem; color:var(--text-3); line-height:1.7; margin-top:0.875rem; max-width:260px; }
+    .fch { font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-3); font-weight:600; margin-bottom:1.25rem; }
+    .flist { list-style:none; display:flex; flex-direction:column; gap:0.625rem; }
+    .flist a { color:var(--text-2); text-decoration:none; font-size:0.875rem; transition:color 0.2s; }
+    .flist a:hover { color:var(--text); }
+    .fbot { border-top:1px solid var(--border); padding-top:1.75rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; }
+    .fcp { font-size:0.8rem; color:var(--text-3); }
+    .fdisc { font-size:0.73rem; color:var(--text-3); max-width:380px; text-align:right; }
+
+    /* MODAL */
+    .overlay {
+      position:fixed; inset:0; z-index:200;
+      background:rgba(0,0,0,0.6); backdrop-filter:blur(10px);
+      display:flex; align-items:center; justify-content:center; padding:1rem;
+      opacity:0; pointer-events:none; transition:opacity 0.3s;
+    }
+    .overlay.on { opacity:1; pointer-events:all; }
+    .modal {
+      background:var(--bg-2); border:1px solid var(--border-2);
+      border-radius:22px; padding:2.25rem; width:100%; max-width:430px; position:relative;
+      transform:scale(0.97) translateY(12px); transition:transform 0.35s var(--ease);
+      max-height:90vh; overflow-y:auto;
+    }
+    .overlay.on .modal { transform:scale(1) translateY(0); }
+    .mx {
+      position:absolute; top:1.25rem; right:1.25rem;
+      background:var(--surface); border:1px solid var(--border); border-radius:8px;
+      width:32px; height:32px; display:flex; align-items:center; justify-content:center;
+      cursor:pointer; color:var(--text-2); font-size:1rem; transition:all 0.2s;
+    }
+    .mx:hover { color:var(--text); background:var(--surface-2); }
+    .mlogo { font-family:'Instrument Serif',serif; font-size:1.6rem; color:var(--text); margin-bottom:0.3rem; }
+    .msub { font-size:0.825rem; color:var(--text-3); margin-bottom:1.75rem; }
+    .tabs { display:flex; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:3px; margin-bottom:1.75rem; }
+    .tab {
+      flex:1; padding:0.55rem; border:none; background:none;
+      color:var(--text-2); font-size:0.85rem; border-radius:8px; cursor:pointer;
+      transition:all 0.25s; font-family:'Geist',sans-serif;
+    }
+    .tab.on { background:var(--accent); color:#fff; box-shadow:0 2px 12px var(--accent-g); }
+    .fg2 { margin-bottom:0.875rem; }
+    .frow { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+    label { display:block; font-size:0.75rem; color:var(--text-2); margin-bottom:0.35rem; }
+    input, select {
+      width:100%; padding:0.7rem 0.9rem;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:10px; color:var(--text); font-size:0.875rem;
+      font-family:'Geist',sans-serif; outline:none; transition:border-color 0.25s,box-shadow 0.25s;
+    }
+    input:focus,select:focus { border-color:var(--accent); box-shadow:0 0 0 3px rgba(124,58,237,0.12); }
+    input::placeholder { color:var(--text-3); }
+    select option { background:var(--bg-2); color:var(--text); }
+    .bsub {
+      width:100%; padding:0.825rem; background:var(--accent); color:#fff;
+      border:none; border-radius:12px; font-size:0.95rem; font-weight:500;
+      cursor:pointer; margin-top:0.5rem; font-family:'Geist',sans-serif;
+      transition:all 0.25s; box-shadow:0 4px 20px var(--accent-g);
+    }
+    .bsub:hover { transform:translateY(-1px); box-shadow:0 8px 32px var(--accent-g); }
+    .bsub:disabled { opacity:0.7; cursor:not-allowed; transform:none; }
+    .fmsg { margin-top:0.875rem; padding:0.7rem 0.9rem; border-radius:10px; font-size:0.82rem; display:none; }
+    .fmsg.ok { background:rgba(52,211,153,0.1); color:var(--green); border:1px solid rgba(52,211,153,0.2); display:block; }
+    .fmsg.er { background:rgba(239,68,68,0.1); color:#f87171; border:1px solid rgba(239,68,68,0.2); display:block; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+    .reveal { opacity:0; transform:translateY(26px); transition:opacity 0.65s var(--ease),transform 0.65s var(--ease); }
+    .reveal.in { opacity:1; transform:translateY(0); }
+
+    @media(max-width:1024px){
+      .hero-grid{grid-template-columns:1fr}
+      .hcard{display:none}
+      .cats{grid-template-columns:repeat(2,1fr)}
+      .fgrid{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:768px){
+      .nav-links{display:none}
+      .steps{grid-template-columns:1fr}
+      .tgrid{grid-template-columns:1fr}
+      .fg{grid-template-columns:1fr;gap:2.5rem}
+      .fg.rev{direction:ltr}
+      .cta-box{padding:3.5rem 1.75rem}
+      .fgrid{grid-template-columns:1fr}
+      .fdisc{text-align:left}
+      .frow{grid-template-columns:1fr}
+    }
+    @media(max-width:480px){
+      .cats{grid-template-columns:1fr 1fr}
+      .hero-stats{gap:1.25rem}
+      .sn{font-size:1.75rem}
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-grad"></div>
+<canvas id="cvs"></canvas>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="wrap">
+    <div class="nav-row">
+      <a href="/" class="logo">NY<b>AA</b>I</a>
+      <div class="nav-links">
+        <a href="#how" class="nav-link">How it Works</a>
+        <a href="#problems" class="nav-link">Problems</a>
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#languages" class="nav-link">Languages</a>
+      </div>
+      <div class="nav-right">
+        <button class="theme-btn" id="themeBtn" title="Switch theme">🌙</button>
+        <button class="btn-nav" onclick="openModal('reg')">Get Justice Free</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="badge"><span class="bdot"></span> AI-Powered Legal Platform for India</div>
+        <h1>
+          Know your rights.<br>
+          <em>Fight back.</em><br>
+          <span class="underline">Get justice.</span>
+        </h1>
+        <p class="hero-p">
+          Describe your problem in <strong>any Indian language</strong> — NYAAI identifies the exact law being violated, generates a <strong>court-ready legal notice</strong>, and guides you every step. <strong>Completely free.</strong>
+        </p>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="openModal('reg')">⚖️ Start My Case — Free</button>
+          <a href="#how" class="btn-ghost">▶ See How It Works</a>
+        </div>
+        <div class="hero-stats">
+          <div><div class="sn" data-count="50">0</div><div class="sl">Indian Laws</div></div>
+          <div class="ssep"></div>
+          <div><div class="sn" data-count="8">0</div><div class="sl">Languages</div></div>
+          <div class="ssep"></div>
+          <div><div class="sn" data-count="100">0</div><div class="sl">% Free Forever</div></div>
+        </div>
+      </div>
+      <div class="hcard">
+        <div class="chip">⚡ Live Demo</div>
+        <div class="cproblem"><span>"My landlord won't return my</span> ₹40,000 security deposit after 4 months of leaving the flat..."</div>
+        <div class="analyzing"><div class="adots"><span></span><span></span><span></span></div> NYAAI is analysing your case</div>
+        <div class="res"><div class="res-ic">📋</div><div><div class="res-t">Law Identified</div><div class="res-d">Consumer Protection Act 2019 — Section 2(6)</div></div></div>
+        <div class="res"><div class="res-ic">🏛️</div><div><div class="res-t">Forum to Approach</div><div class="res-d">District Consumer Disputes Redressal Commission</div></div></div>
+        <div class="res"><div class="res-ic">📄</div><div><div class="res-t">Legal Notice Ready</div><div class="res-d">Download your PDF notice — send it today</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ttrack">
+    <div class="titem"><i>⚖</i> Consumer Protection Act</div>
+    <div class="titem"><i>⚖</i> IT Act 2000</div>
+    <div class="titem"><i>⚖</i> Rent Control Act</div>
+    <div class="titem"><i>⚖</i> Payment of Wages Act</div>
+    <div class="titem"><i>⚖</i> Banking Ombudsman</div>
+    <div class="titem"><i>⚖</i> Telecom Disputes</div>
+    <div class="titem"><i>⚖</i> E-Commerce Rules 2020</div>
+    <div class="titem"><i>⚖</i> Medical Negligence</div>
+    <div class="titem"><i>⚖</i> IPC Section 415 & 420</div>
+    <div class="titem"><i>⚖</i> RTI Act 2005</div>
+    <div class="titem"><i>⚖</i> Consumer Protection Act</div>
+    <div class="titem"><i>⚖</i> IT Act 2000</div>
+    <div class="titem"><i>⚖</i> Rent Control Act</div>
+    <div class="titem"><i>⚖</i> Payment of Wages Act</div>
+    <div class="titem"><i>⚖</i> Banking Ombudsman</div>
+    <div class="titem"><i>⚖</i> Telecom Disputes</div>
+    <div class="titem"><i>⚖</i> E-Commerce Rules 2020</div>
+    <div class="titem"><i>⚖</i> Medical Negligence</div>
+    <div class="titem"><i>⚖</i> IPC Section 415 & 420</div>
+    <div class="titem"><i>⚖</i> RTI Act 2005</div>
+  </div>
+</div>
+
+<!-- HOW -->
+<section id="how">
+  <div class="wrap">
+    <div class="eyebrow">Simple Process</div>
+    <h2 class="sh2 reveal">Justice in <em>3 steps</em></h2>
+    <p class="sp reveal">No lawyers. No jargon. No fees. Describe your problem and NYAAI does the rest.</p>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-no">Step 01</div>
+        <div class="step-ic">🗣️</div>
+        <div class="step-h">Describe Your Problem</div>
+        <p class="step-p">Type or speak in any Indian language. No legal knowledge needed — just tell us what happened in your own words.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-no">Step 02</div>
+        <div class="step-ic">🤖</div>
+        <div class="step-h">AI Finds the Law</div>
+        <p class="step-p">NYAAI instantly identifies which Indian law was violated, the exact section, and your full legal rights as a citizen.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-no">Step 03</div>
+        <div class="step-ic">📄</div>
+        <div class="step-h">Download & Send Notice</div>
+        <p class="step-p">Get a court-ready legal notice as PDF. Send it to the party who wronged you. Track your case to full resolution.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEMS -->
+<section id="problems" class="bg2">
+  <div class="wrap">
+    <div class="cats-top">
+      <div>
+        <div class="eyebrow">What We Solve</div>
+        <h2 class="sh2 reveal">Every problem has <em>a solution</em></h2>
+      </div>
+      <button class="btn-ghost" onclick="openModal('reg')">View All →</button>
+    </div>
+    <div class="cats">
+      <div class="cat reveal"><div class="cat-arr">↗</div><div class="cat-em">🏠</div><div class="cat-h">Landlord Disputes</div><p class="cat-p">Deposit not returned, illegal eviction, overcharging rent</p></div>
+      <div class="cat reveal"><div class="cat-arr">↗</div><div class="cat-em">🛒</div><div class="cat-h">Online Shopping Fraud</div><p class="cat-p">Fake products, refund denied, delivery not received</p></div>
+      <div class="cat reveal"><div class="cat-arr">↗</div><div class="cat-em">💰</div><div class="cat-h">Salary & PF Issues</div><p class="cat-p">Salary withheld, PF not deposited, wrongful termination</p></div>
+      <div class="cat reveal"><div class="cat-arr">↗</div><div class="cat-em">🏦</div><div class="cat-h">Bank & Finance</div><p class="cat-p">Unauthorized charges, loan fraud, credit card disputes</p></div>
+      <div class="cat reveal"><div class="cat-arr">↗</div><div class="cat-em">🏥</div><div class="cat-h">Medical Negligence</div><p class="cat-p">Wrong treatment, overcharging, medicine fraud</p></div>
+      <div class="cat reveal"><div class="cat-arr">↗</div><div class="cat-em">📱</div><div class="cat-h">Telecom Disputes</div><p class="cat-p">Wrong billing, service not provided, data theft</p></div>
+      <div class="cat reveal"><div class="cat-arr">↗</div><div class="cat-em">🔧</div><div class="cat-h">Service Fraud</div><p class="cat-p">Work incomplete, overcharging, material fraud</p></div>
+      <div class="cat reveal"><div class="cat-arr">↗</div><div class="cat-em">📦</div><div class="cat-h">Product Defects</div><p class="cat-p">Defective goods, expired products, false advertising</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="wrap">
+    <div class="eyebrow">Why NYAAI</div>
+    <h2 class="sh2 reveal">Built different. <em>Built for India.</em></h2>
+    <div class="fg">
+      <div class="fvis reveal">
+        <div style="background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.15);border-radius:14px;padding:1.25rem;margin-bottom:1rem">
+          <div style="font-size:0.68rem;color:var(--text-3);margin-bottom:0.75rem;letter-spacing:0.06em;text-transform:uppercase">AI Legal Analysis — Live</div>
+          <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.875rem">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)"></div>
+            <span style="font-size:0.78rem;color:var(--green)">Processing case...</span>
+          </div>
+          <div style="height:5px;border-radius:99px;background:var(--surface-2);overflow:hidden">
+            <div style="height:100%;width:72%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:99px;animation:prog 2.5s ease-in-out infinite alternate"></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center">
+            <div style="font-family:'Instrument Serif',serif;font-size:1.75rem;color:var(--accent-2)">98%</div>
+            <div style="font-size:0.7rem;color:var(--text-3);margin-top:0.2rem">Accuracy</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center">
+            <div style="font-family:'Instrument Serif',serif;font-size:1.75rem;color:var(--accent-2)">2s</div>
+            <div style="font-size:0.7rem;color:var(--text-3);margin-top:0.2rem">Analysis</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center">
+            <div style="font-family:'Instrument Serif',serif;font-size:1.75rem;color:var(--accent-2)">50+</div>
+            <div style="font-size:0.7rem;color:var(--text-3);margin-top:0.2rem">Laws</div>
+          </div>
+        </div>
+      </div>
+      <div class="fitems reveal">
+        <div class="fi"><div class="fi-ic">🧠</div><div><div class="fi-h">RAG-Powered Legal AI</div><p class="fi-p">Not just a chatbot. NYAAI retrieves actual Indian legal text before every response — grounded in real law, not AI guesswork.</p></div></div>
+        <div class="fi"><div class="fi-ic">📸</div><div><div class="fi-h">Document OCR Scanner</div><p class="fi-p">Photograph your rent agreement, bill, or receipt. NYAAI reads and analyses it automatically — no typing needed.</p></div></div>
+        <div class="fi"><div class="fi-ic">🔒</div><div><div class="fi-h">100% Private & Secure</div><p class="fi-p">Your case details are encrypted and never shared. Your legal matters stay completely private.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LANGUAGES -->
+<section id="languages" class="bg2">
+  <div class="wrap">
+    <div class="eyebrow">Multilingual</div>
+    <h2 class="sh2 reveal">Your language. <em>Your rights.</em></h2>
+    <p class="sp reveal">Justice shouldn't depend on knowing English. NYAAI works in the language you're most comfortable in — including voice input.</p>
+    <div class="lwrap">
+      <div class="lang reveal">🇮🇳 English</div>
+      <div class="lang reveal">🇮🇳 हिंदी</div>
+      <div class="lang reveal">🇮🇳 தமிழ்</div>
+      <div class="lang reveal">🇮🇳 తెలుగు</div>
+      <div class="lang reveal">🇮🇳 বাংলা</div>
+      <div class="lang reveal">🇮🇳 मराठी</div>
+      <div class="lang reveal">🇮🇳 ગુજરાતી</div>
+      <div class="lang reveal">🇮🇳 ਪੰਜਾਬੀ</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section>
+  <div class="wrap">
+    <div class="eyebrow">Real Stories</div>
+    <h2 class="sh2 reveal">Justice was <em>served</em></h2>
+    <div class="tgrid">
+      <div class="tcard reveal">
+        <div class="tq">"</div>
+        <p class="tt">My landlord kept my ₹60,000 deposit for 8 months with excuses. NYAAI generated a proper legal notice in under 2 minutes. I got every rupee back within 15 days.</p>
+        <div class="ta"><div class="tav">R</div><div><div class="ts">★★★★★</div><div class="tn">Ramesh Kumar</div><div class="tr">Software Engineer, Bengaluru</div></div></div>
+      </div>
+      <div class="tcard reveal">
+        <div class="tq">"</div>
+        <p class="tt">Flipkart refused to refund ₹12,000 for a defective phone. NYAAI told me exactly which section of the Consumer Protection Act applies. Full refund in 10 days.</p>
+        <div class="ta"><div class="tav">P</div><div><div class="ts">★★★★★</div><div class="tn">Priya Sharma</div><div class="tr">School Teacher, Delhi</div></div></div>
+      </div>
+      <div class="tcard reveal">
+        <div class="tq">"</div>
+        <p class="tt">मेरी सैलरी 3 महीने से रुकी थी। NYAAI ने हिंदी में सब समझाया और नोटिस तैयार किया। मालिक ने अगले हफ्ते पूरी सैलरी दे दी।</p>
+        <div class="ta"><div class="tav">M</div><div><div class="ts">★★★★★</div><div class="tn">Mohan Lal</div><div class="tr">Factory Worker, Ludhiana</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section>
+  <div class="wrap">
+    <div class="cta-box">
+      <h2 class="cta-h">Don't stay silent.<br>Get your <em>justice today.</em></h2>
+      <p class="cta-p">70% of Indians who are cheated never fight back. You don't have to be one of them. NYAAI gives you the power to fight — in your language, for free.</p>
+      <div class="cta-btns">
+        <button class="btn-primary" onclick="openModal('reg')">⚖️ Start My Case — It's Free</button>
+        <a href="#how" class="btn-ghost">Learn More</a>
+      </div>
+      <p class="cta-note">No credit card. No lawyer. No hidden fees. Ever.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <a href="/" class="logo">NY<b>AA</b>I</a>
+        <p class="fbrand-p">AI-powered legal justice for every Indian citizen. Know your rights. Fight back. Get justice — completely free.</p>
+      </div>
+      <div>
+        <div class="fch">Platform</div>
+        <ul class="flist">
+          <li><a href="#">How It Works</a></li>
+          <li><a href="#">Legal Notice Generator</a></li>
+          <li><a href="#">Case Tracker</a></li>
+          <li><a href="#">Forum Finder</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="fch">Legal</div>
+        <ul class="flist">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Disclaimer</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="fch">Languages</div>
+        <ul class="flist">
+          <li><a href="#">हिंदी</a></li>
+          <li><a href="#">தமிழ்</a></li>
+          <li><a href="#">తెలుగు</a></li>
+          <li><a href="#">বাংলা</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fbot">
+      <p class="fcp">© 2025 NYAAI. Built with ❤️ for India.</p>
+      <p class="fdisc">NYAAI provides legal information, not legal advice. For specific legal counsel, consult a qualified lawyer.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="overlay" id="overlay" onclick="outsideClose(event)">
+  <div class="modal">
+    <button class="mx" onclick="closeModal()">✕</button>
+    <div class="mlogo">NYAAI</div>
+    <p class="msub">Justice for Every Indian — Free Forever</p>
+    <div class="tabs">
+      <button class="tab on" onclick="switchTab('reg')">Create Account</button>
+      <button class="tab" onclick="switchTab('log')">Sign In</button>
+    </div>
+    <div id="reg-p">
+      <div class="frow">
+        <div class="fg2"><label>First Name</label><input id="r-fn" type="text" placeholder="Rahul"/></div>
+        <div class="fg2"><label>Last Name</label><input id="r-ln" type="text" placeholder="Sharma"/></div>
+      </div>
+      <div class="fg2"><label>Username</label><input id="r-un" type="text" placeholder="rahulsharma"/></div>
+      <div class="fg2"><label>Email Address</label><input id="r-em" type="email" placeholder="rahul@example.com"/></div>
+      <div class="fg2"><label>Phone Number</label><input id="r-ph" type="tel" placeholder="+91 98765 43210"/></div>
+      <div class="frow">
+        <div class="fg2">
+          <label>State</label>
+          <select id="r-st">
+            <option value="">Select State</option>
+            <option value="PB">Punjab</option><option value="DL">Delhi</option>
+            <option value="MH">Maharashtra</option><option value="KA">Karnataka</option>
+            <option value="TN">Tamil Nadu</option><option value="UP">Uttar Pradesh</option>
+            <option value="GJ">Gujarat</option><option value="WB">West Bengal</option>
+            <option value="RJ">Rajasthan</option><option value="HR">Haryana</option>
+            <option value="AP">Andhra Pradesh</option><option value="BR">Bihar</option>
+          </select>
+        </div>
+        <div class="fg2">
+          <label>Language</label>
+          <select id="r-la">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option><option value="ta">Tamil</option>
+            <option value="te">Telugu</option><option value="bn">Bengali</option>
+            <option value="mr">Marathi</option><option value="gu">Gujarati</option>
+            <option value="pa">Punjabi</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg2"><label>Password (min 8 characters)</label><input id="r-pw" type="password" placeholder="••••••••"/></div>
+      <div class="fg2"><label>Confirm Password</label><input id="r-cp" type="password" placeholder="••••••••"/></div>
+      <button class="bsub" id="r-btn" onclick="doReg()">Create Account ⚖️</button>
+      <div class="fmsg" id="r-msg"></div>
+    </div>
+    <div id="log-p" style="display:none">
+      <div class="fg2"><label>Email Address</label><input id="l-em" type="email" placeholder="rahul@example.com"/></div>
+      <div class="fg2"><label>Password</label><input id="l-pw" type="password" placeholder="••••••••"/></div>
+      <button class="bsub" id="l-btn" onclick="doLog()">Sign In ⚖️</button>
+      <div class="fmsg" id="l-msg"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  @keyframes prog { from{width:30%} to{width:85%} }
+</style>
+
+<script>
+  // THEME
+  const html = document.documentElement;
+  const tBtn = document.getElementById('themeBtn');
+  const saved = localStorage.getItem('nyaai-theme') || 'dark';
+  applyTheme(saved);
+  function applyTheme(t) {
+    html.setAttribute('data-theme', t);
+    tBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+    tBtn.title = t === 'dark' ? 'Switch to Light Mode (easier for reading)' : 'Switch to Dark Mode';
+    localStorage.setItem('nyaai-theme', t);
+  }
+  tBtn.addEventListener('click', () => {
+    applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  });
+
+  // NAVBAR
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('stuck', window.scrollY > 40);
+  });
+
+  // PARTICLES
+  const cvs = document.getElementById('cvs');
+  const ctx = cvs.getContext('2d');
+  let W, H, pts = [];
+  function resize() { W = cvs.width = innerWidth; H = cvs.height = innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  class Pt {
+    constructor() { this.init(); }
+    init() {
+      this.x = Math.random()*W; this.y = Math.random()*H;
+      this.r = Math.random()*1.5+0.4;
+      this.vx = (Math.random()-0.5)*0.22; this.vy = (Math.random()-0.5)*0.22;
+      this.o = Math.random()*0.28+0.04;
+    }
+    update() {
+      this.x += this.vx; this.y += this.vy;
+      if(this.x<0||this.x>W||this.y<0||this.y>H) this.init();
+    }
+    draw() {
+      ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+      ctx.fillStyle = `rgba(124,58,237,${this.o})`; ctx.fill();
+    }
+  }
+  for(let i=0;i<55;i++) pts.push(new Pt());
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{p.update();p.draw();});
+    for(let i=0;i<pts.length;i++) for(let j=i+1;j<pts.length;j++){
+      const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y, d=Math.sqrt(dx*dx+dy*dy);
+      if(d<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(124,58,237,${0.055*(1-d/110)})`;ctx.lineWidth=0.5;ctx.stroke();}
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // SCROLL REVEAL
+  const ro = new IntersectionObserver(entries=>{
+    entries.forEach((e,i)=>{if(e.isIntersecting) setTimeout(()=>e.target.classList.add('in'),i*70);});
+  },{threshold:0.1});
+  document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+  // COUNTERS
+  const co = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(!e.isIntersecting) return;
+      const el=e.target, end=+el.dataset.count; let n=0; const step=end/55;
+      const t=setInterval(()=>{
+        n+=step;
+        if(n>=end){el.textContent=end+(end===100?'%':'+');clearInterval(t);}
+        else el.textContent=Math.floor(n)+(end===100?'%':'+');
+      },22);
+      co.unobserve(el);
+    });
+  },{threshold:0.5});
+  document.querySelectorAll('[data-count]').forEach(el=>co.observe(el));
+
+  // MODAL
+  function openModal(tab) {
+    document.getElementById('overlay').classList.add('on');
+    document.body.style.overflow='hidden'; switchTab(tab||'reg');
+  }
+  function closeModal() {
+    document.getElementById('overlay').classList.remove('on');
+    document.body.style.overflow='';
+  }
+  function outsideClose(e){if(e.target.id==='overlay')closeModal();}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+  function switchTab(t){
+    document.getElementById('reg-p').style.display=t==='reg'?'block':'none';
+    document.getElementById('log-p').style.display=t==='log'?'block':'none';
+    document.querySelectorAll('.tab').forEach((el,i)=>el.classList.toggle('on',(i===0&&t==='reg')||(i===1&&t==='log')));
+  }
+
+  // REGISTER
+  async function doReg(){
+    const btn=document.getElementById('r-btn'), msg=document.getElementById('r-msg');
+    btn.disabled=true; btn.textContent='Creating account...'; msg.className='fmsg';
+    try{
+      const res=await fetch('/api/auth/register/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        first_name:document.getElementById('r-fn').value,last_name:document.getElementById('r-ln').value,
+        username:document.getElementById('r-un').value,email:document.getElementById('r-em').value,
+        phone:document.getElementById('r-ph').value,state:document.getElementById('r-st').value,
+        preferred_language:document.getElementById('r-la').value,
+        password:document.getElementById('r-pw').value,confirm_password:document.getElementById('r-cp').value,
+      })});
+      const d=await res.json();
+      if(d.success){
+        localStorage.setItem('access_token',d.tokens.access);
+        localStorage.setItem('refresh_token',d.tokens.refresh);
+        localStorage.setItem('user',JSON.stringify(d.user));
+        msg.textContent='🎉 '+d.message; msg.className='fmsg ok';
+        setTimeout(()=>{closeModal();window.location.href='/dashboard/';},1500);
+      }else{msg.textContent='❌ '+d.message;msg.className='fmsg er';}
+    }catch{msg.textContent='❌ Something went wrong. Try again.';msg.className='fmsg er';}
+    btn.disabled=false;btn.textContent='Create Account ⚖️';
+  }
+
+  // LOGIN
+  async function doLog(){
+    const btn=document.getElementById('l-btn'), msg=document.getElementById('l-msg');
+    btn.disabled=true;btn.textContent='Signing in...';msg.className='fmsg';
+    try{
+      const res=await fetch('/api/auth/login/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        email:document.getElementById('l-em').value,password:document.getElementById('l-pw').value,
+      })});
+      const d=await res.json();
+      if(d.success){
+        localStorage.setItem('access_token',d.tokens.access);
+        localStorage.setItem('refresh_token',d.tokens.refresh);
+        localStorage.setItem('user',JSON.stringify(d.user));
+        msg.textContent='✅ '+d.message;msg.className='fmsg ok';
+        setTimeout(()=>{closeModal();window.location.href='/dashboard/';},1200);
+      }else{msg.textContent='❌ '+d.message;msg.className='fmsg er';}
+    }catch{msg.textContent='❌ Something went wrong. Try again.';msg.className='fmsg er';}
+    btn.disabled=false;btn.textContent='Sign In ⚖️';
+  }
+</script>
+</body>
+</html>
