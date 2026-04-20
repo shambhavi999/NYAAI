@@ -7,6 +7,10 @@ from pathlib import Path
 from datetime import timedelta
 import os
 
+from dotenv import load_dotenv  # ADD THIS
+
+load_dotenv()
+
 # ─────────────────────────────────────────────
 #  BASE DIRECTORY
 # ─────────────────────────────────────────────
@@ -169,9 +173,13 @@ SIMPLE_JWT = {
 }
 
 # ─────────────────────────────────────────────
-#  GEMINI API — paste your new key here
+#  GROQ API — paste your new key here
 # ─────────────────────────────────────────────
-GROQ_API_KEY = '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'
+
+
+
+import os
+GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')
 
 # ─────────────────────────────────────────────
 #  EMAIL
