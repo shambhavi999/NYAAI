@@ -42,6 +42,9 @@ class Case(models.Model):
     category    = models.CharField(max_length=20, choices=CATEGORY_CHOICES, default='other')
     language    = models.CharField(max_length=5, default='en')
 
+    respondent_name    = models.CharField(max_length=200, blank=True)
+    respondent_address = models.TextField(blank=True)
+
     # AI results
     laws_violated    = models.JSONField(null=True, blank=True)
     forum_type       = models.CharField(max_length=200, blank=True)

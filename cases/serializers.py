@@ -32,6 +32,7 @@ class CaseSerializer(serializers.ModelSerializer):
             'language', 'status', 'status_display', 'is_analysed',
             'laws_violated', 'forum_type', 'ai_summary', 'confidence_score',
             'documents_needed', 'notice_sent', 'timeline', 'notices',
+            'respondent_name', 'respondent_address',
             'created_at', 'updated_at',
         ]
 
@@ -39,7 +40,8 @@ class CaseSerializer(serializers.ModelSerializer):
 class CaseCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model  = Case
-        fields = ['title', 'description', 'category', 'language']
+        fields = ['title', 'description', 'category', 'language',
+                  'respondent_name', 'respondent_address']
 
     def validate_title(self, value):
         if len(value) < 5:
