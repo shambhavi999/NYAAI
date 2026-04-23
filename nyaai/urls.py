@@ -12,6 +12,7 @@ urlpatterns = [
     path('',              TemplateView.as_view(template_name='index.html'),     name='home'),
     path('api/documents/', include('documents.urls')),
     path('case/<int:id>/', TemplateView.as_view(template_name='case_detail.html'), name='case_detail'),
+    path('profile/', TemplateView.as_view(template_name='profile.html'), name='profile'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
