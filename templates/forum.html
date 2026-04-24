@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Find Forum — NYAAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --ease: cubic-bezier(0.16,1,0.3,1);
+      --bg:        #07060f;
+      --bg-2:      #0d0b1a;
+      --bg-3:      #120f22;
+      --surface:   rgba(255,255,255,0.04);
+      --surface-2: rgba(255,255,255,0.07);
+      --border:    rgba(255,255,255,0.08);
+      --border-2:  rgba(255,255,255,0.14);
+      --text:      #f0eeff;
+      --text-2:    #a09db8;
+      --text-3:    #635f7a;
+      --accent:    #7c3aed;
+      --accent-2:  #9f67ff;
+      --accent-g:  rgba(124,58,237,0.3);
+      --green:     #34d399;
+      --green-g:   rgba(52,211,153,0.15);
+      --gold:      #fbbf24;
+      --red:       #f87171;
+      --sidebar-w: 260px;
+    }
+    [data-theme="light"] {
+      --bg:        #faf9ff;
+      --bg-2:      #f3f1ff;
+      --bg-3:      #ede9ff;
+      --surface:   rgba(109,40,217,0.05);
+      --surface-2: rgba(109,40,217,0.09);
+      --border:    rgba(109,40,217,0.12);
+      --border-2:  rgba(109,40,217,0.22);
+      --text:      #1a1530;
+      --text-2:    #4a4568;
+      --text-3:    #8b87a8;
+      --accent:    #6d28d9;
+      --accent-2:  #7c3aed;
+      --accent-g:  rgba(109,40,217,0.18);
+      --green:     #059669;
+      --green-g:   rgba(5,150,105,0.1);
+      --gold:      #d97706;
+      --red:       #dc2626;
+    }
+
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:'Geist',system-ui,sans-serif;font-weight:400;line-height:1.6;overflow-x:hidden;transition:background 0.4s var(--ease),color 0.4s var(--ease)}
+
+    /* ── SIDEBAR ── */
+    .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);z-index:100;background:var(--bg-2);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:transform 0.35s var(--ease),background 0.4s}
+    .sidebar-logo{padding:1.5rem 1.5rem 1rem;border-bottom:1px solid var(--border)}
+    .logo{font-family:'Instrument Serif',serif;font-size:1.6rem;font-weight:400;color:var(--text);text-decoration:none;letter-spacing:-0.01em}
+    .logo b{color:var(--accent);font-weight:400}
+    .logo-sub{font-size:0.7rem;color:var(--text-3);margin-top:0.1rem;letter-spacing:0.03em}
+    .sidebar-nav{flex:1;padding:1rem 0.75rem;overflow-y:auto}
+    .nav-section{margin-bottom:1.75rem}
+    .nav-section-label{font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-3);font-weight:600;padding:0 0.75rem;margin-bottom:0.5rem}
+    .nav-item{display:flex;align-items:center;gap:0.75rem;padding:0.6rem 0.75rem;border-radius:10px;color:var(--text-2);text-decoration:none;font-size:0.875rem;cursor:pointer;transition:all 0.2s;border:1px solid transparent;background:none;width:100%;text-align:left;font-family:'Geist',sans-serif}
+    .nav-item:hover{color:var(--text);background:var(--surface)}
+    .nav-item.active{color:var(--text);background:var(--surface-2);border-color:var(--border-2)}
+    .nav-item.active .nav-ic{color:var(--accent)}
+    .nav-ic{font-size:1rem;flex-shrink:0;width:20px;text-align:center}
+    .sidebar-bottom{padding:1rem 0.75rem;border-top:1px solid var(--border)}
+    .user-card{display:flex;align-items:center;gap:0.75rem;padding:0.75rem;border-radius:12px;background:var(--surface);border:1px solid var(--border)}
+    .user-avatar-sm{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-size:0.875rem;font-weight:600;color:#fff}
+    .user-name{font-size:0.825rem;font-weight:500}
+    .user-role{font-size:0.7rem;color:var(--text-3)}
+
+    .main{margin-left:var(--sidebar-w);min-height:100vh;transition:margin-left 0.35s var(--ease)}
+    .topbar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid var(--border);padding:0.875rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+    .topbar-left{display:flex;align-items:center;gap:1rem}
+    .back-btn{display:flex;align-items:center;gap:0.5rem;padding:0.45rem 1rem;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:0.825rem;cursor:pointer;font-family:'Geist',sans-serif;transition:all 0.2s;text-decoration:none}
+    .back-btn:hover{border-color:var(--border-2);color:var(--text)}
+    .topbar-title{font-family:'Instrument Serif',serif;font-size:1.4rem;font-weight:400;letter-spacing:-0.01em}
+    .topbar-right{display:flex;align-items:center;gap:0.75rem}
+    .theme-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text-2);font-size:0.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+    .theme-btn:hover{border-color:var(--border-2);color:var(--text)}
+    .menu-btn{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:0.5rem;border-radius:8px;cursor:pointer;font-size:1.1rem}
+
+    .content{padding:2rem}
+
+    /* ── HERO ── */
+    .forum-hero{
+      background:linear-gradient(135deg,rgba(124,58,237,0.12) 0%,rgba(124,58,237,0.04) 100%);
+      border:1px solid rgba(124,58,237,0.2);border-radius:20px;
+      padding:2rem;margin-bottom:1.5rem;
+      position:relative;overflow:hidden;
+      animation:fadeUp 0.5s var(--ease) both;
+    }
+    .forum-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,0.15) 0%,transparent 70%);pointer-events:none}
+    .hero-title{font-family:'Instrument Serif',serif;font-size:1.75rem;margin-bottom:0.4rem}
+    .hero-sub{font-size:0.9rem;color:var(--text-2);margin-bottom:1.5rem;max-width:600px;line-height:1.6}
+
+    /* ── JURISDICTION GUIDE ── */
+    .jurisdiction-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:0}
+    .juris-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:12px;padding:1rem;text-align:center;
+    }
+    .juris-amount{font-size:0.8rem;font-weight:700;margin-bottom:0.25rem}
+    .juris-label{font-size:0.75rem;color:var(--text-2);margin-bottom:0.2rem}
+    .juris-court{font-size:0.7rem;color:var(--text-3)}
+    .juris-card.district{border-color:rgba(52,211,153,0.2);background:rgba(52,211,153,0.05)}
+    .juris-card.district .juris-amount{color:var(--green)}
+    .juris-card.state{border-color:rgba(251,191,36,0.2);background:rgba(251,191,36,0.05)}
+    .juris-card.state .juris-amount{color:var(--gold)}
+    .juris-card.national{border-color:rgba(124,58,237,0.2);background:rgba(124,58,237,0.05)}
+    .juris-card.national .juris-amount{color:var(--accent-2)}
+
+    /* ── SEARCH + FILTER ── */
+    .filter-bar{
+      display:flex;gap:1rem;align-items:center;
+      margin-bottom:1.5rem;flex-wrap:wrap;
+      animation:fadeUp 0.5s var(--ease) 0.07s both;
+    }
+    .search-wrap{position:relative;flex:1;min-width:220px}
+    .search-ic{position:absolute;left:0.875rem;top:50%;transform:translateY(-50%);color:var(--text-3);font-size:0.875rem;pointer-events:none}
+    .search-input{width:100%;padding:0.7rem 0.875rem 0.7rem 2.5rem;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:0.875rem;font-family:'Geist',sans-serif;outline:none;transition:border-color 0.25s,box-shadow 0.25s}
+    .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,0.12)}
+    .search-input::placeholder{color:var(--text-3)}
+    .state-select{padding:0.7rem 1rem;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:0.875rem;font-family:'Geist',sans-serif;outline:none;cursor:pointer;transition:border-color 0.25s;min-width:200px}
+    .state-select:focus{border-color:var(--accent)}
+    .state-select option{background:var(--bg-2);color:var(--text)}
+    .type-pills{display:flex;gap:0.4rem;flex-wrap:wrap}
+    .pill{padding:0.35rem 0.875rem;border-radius:100px;font-size:0.75rem;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text-2);transition:all 0.2s;font-family:'Geist',sans-serif}
+    .pill:hover{border-color:var(--border-2);color:var(--text)}
+    .pill.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+    /* ── RESULTS COUNT ── */
+    .results-info{font-size:0.8rem;color:var(--text-3);margin-bottom:1rem}
+    .results-info span{color:var(--text-2);font-weight:500}
+
+    /* ── NATIONAL COMMISSION CARD ── */
+    .ncdrc-card{
+      background:linear-gradient(135deg,rgba(124,58,237,0.1),rgba(124,58,237,0.04));
+      border:1px solid rgba(124,58,237,0.25);border-radius:16px;
+      padding:1.5rem;margin-bottom:1.5rem;
+      display:flex;gap:1.25rem;align-items:flex-start;
+      animation:fadeUp 0.5s var(--ease) 0.1s both;
+    }
+    .ncdrc-icon{width:48px;height:48px;border-radius:12px;flex-shrink:0;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.25);display:flex;align-items:center;justify-content:center;font-size:1.4rem}
+    .ncdrc-label{font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent-2);margin-bottom:0.3rem}
+    .ncdrc-name{font-size:1rem;font-weight:600;margin-bottom:0.25rem}
+    .ncdrc-detail{font-size:0.8rem;color:var(--text-2);line-height:1.6}
+    .ncdrc-actions{margin-top:0.75rem;display:flex;gap:0.5rem;flex-wrap:wrap}
+
+    /* ── FORUM GRID ── */
+    .forums-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem;animation:fadeUp 0.5s var(--ease) 0.14s both}
+
+    /* ── FORUM CARD ── */
+    .forum-card{
+      background:var(--surface);border:1px solid var(--border);
+      border-radius:16px;padding:1.25rem;
+      transition:all 0.25s;position:relative;overflow:hidden;
+    }
+    .forum-card:hover{border-color:var(--border-2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+    .forum-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity 0.25s}
+    .forum-card:hover::before{opacity:1}
+    .fc-top{display:flex;align-items:flex-start;gap:0.875rem;margin-bottom:0.875rem}
+    .fc-icon{width:40px;height:40px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+    .fc-icon.district{background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.2)}
+    .fc-icon.state-comm{background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2)}
+    .fc-icon.labour{background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2)}
+    .fc-icon.high-court{background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2)}
+    .fc-type-badge{font-size:0.63rem;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;padding:0.15rem 0.5rem;border-radius:100px;margin-bottom:0.3rem;display:inline-block}
+    .fc-type-badge.district{background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2)}
+    .fc-type-badge.state-comm{background:rgba(251,191,36,0.1);color:var(--gold);border:1px solid rgba(251,191,36,0.2)}
+    .fc-type-badge.labour{background:rgba(124,58,237,0.1);color:var(--accent-2);border:1px solid rgba(124,58,237,0.2)}
+    .fc-type-badge.high-court{background:rgba(248,113,113,0.1);color:var(--red);border:1px solid rgba(248,113,113,0.2)}
+    .fc-name{font-size:0.9rem;font-weight:600;line-height:1.35;margin-bottom:0.15rem}
+    .fc-state{font-size:0.75rem;color:var(--text-3)}
+    .fc-divider{height:1px;background:var(--border);margin:0.875rem 0}
+    .fc-detail{font-size:0.8rem;color:var(--text-2);line-height:1.65;margin-bottom:0.625rem}
+    .fc-detail strong{color:var(--text);font-weight:500}
+    .fc-jurisdiction{
+      font-size:0.75rem;color:var(--accent-2);
+      background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.15);
+      border-radius:8px;padding:0.4rem 0.75rem;margin-bottom:0.875rem;
+      display:inline-block;
+    }
+    .fc-actions{display:flex;gap:0.5rem}
+    .btn-copy{
+      flex:1;padding:0.5rem;border-radius:8px;
+      background:var(--surface-2);border:1px solid var(--border);
+      color:var(--text-2);font-size:0.775rem;cursor:pointer;
+      font-family:'Geist',sans-serif;transition:all 0.2s;
+      display:flex;align-items:center;justify-content:center;gap:0.4rem;
+    }
+    .btn-copy:hover{border-color:var(--border-2);color:var(--text)}
+    .btn-copy.copied{background:rgba(52,211,153,0.1);border-color:rgba(52,211,153,0.3);color:var(--green)}
+    .btn-maps{
+      padding:0.5rem 0.875rem;border-radius:8px;
+      background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.2);
+      color:var(--accent-2);font-size:0.775rem;cursor:pointer;
+      font-family:'Geist',sans-serif;transition:all 0.2s;
+      display:flex;align-items:center;gap:0.4rem;text-decoration:none;
+    }
+    .btn-maps:hover{background:rgba(124,58,237,0.18);border-color:rgba(124,58,237,0.35)}
+
+    /* ── EMPTY STATE ── */
+    .empty-state{text-align:center;padding:4rem 2rem;color:var(--text-3)}
+    .empty-icon{font-size:3rem;margin-bottom:1rem;opacity:0.5}
+    .empty-title{font-size:1rem;font-weight:500;margin-bottom:0.4rem;color:var(--text-2)}
+    .empty-sub{font-size:0.85rem}
+
+    /* ── TOAST ── */
+    .toast{position:fixed;bottom:2rem;right:2rem;z-index:999;padding:0.75rem 1.25rem;border-radius:12px;font-size:0.85rem;font-weight:500;opacity:0;transform:translateY(12px);transition:all 0.3s var(--ease);pointer-events:none;max-width:320px}
+    .toast.show{opacity:1;transform:translateY(0)}
+    .toast.success{background:rgba(52,211,153,0.15);color:var(--green);border:1px solid rgba(52,211,153,0.3)}
+    .toast.info{background:rgba(124,58,237,0.15);color:var(--accent-2);border:1px solid rgba(124,58,237,0.3)}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    @media(max-width:900px){
+      .sidebar{transform:translateX(-100%)}
+      .sidebar.open{transform:translateX(0)}
+      .main{margin-left:0}
+      .menu-btn{display:flex}
+      .jurisdiction-grid{grid-template-columns:1fr}
+      .forums-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:600px){
+      .content{padding:1rem}
+      .filter-bar{flex-direction:column;align-items:stretch}
+      .state-select{width:100%}
+    }
+  </style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <a href="/" class="logo">NY<b>AA</b>I</a>
+    <div class="logo-sub">Justice for Every Indian</div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-label">Main</div>
+      <a class="nav-item" href="/dashboard/"><span class="nav-ic">🏠</span> Dashboard</a>
+      <a class="nav-item" href="/dashboard/"><span class="nav-ic">⚖️</span> New Case</a>
+      <a class="nav-item" href="/dashboard/"><span class="nav-ic">📋</span> My Cases</a>
+      <a class="nav-item" href="/dashboard/"><span class="nav-ic">📄</span> Legal Notices</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Resources</div>
+      <button class="nav-item"><span class="nav-ic">📚</span> Indian Laws</button>
+      <a class="nav-item active" href="/forum/"><span class="nav-ic">🏛️</span> Find Forum</a>
+      <button class="nav-item"><span class="nav-ic">❓</span> How to Use</button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-label">Account</div>
+      <a class="nav-item" href="/profile/"><span class="nav-ic">👤</span> Profile</a>
+      <button class="nav-item" onclick="doLogout()"><span class="nav-ic">🚪</span> Sign Out</button>
+    </div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar-sm" id="sidebar-avatar">?</div>
+      <div>
+        <div class="user-name" id="sidebar-name">Loading...</div>
+        <div class="user-role">NYAAI Member</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+      <a class="back-btn" href="/dashboard/">← Dashboard</a>
+      <div class="topbar-title">Find Forum</div>
+    </div>
+    <div class="topbar-right">
+      <button class="theme-btn" id="themeBtn">🌙</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- HERO -->
+    <div class="forum-hero">
+      <div class="hero-title">🏛️ Find the Right Forum</div>
+      <div class="hero-sub">Locate the correct Consumer Forum, Labour Court, or High Court for your case across all Indian states and union territories.</div>
+      <div class="jurisdiction-grid">
+        <div class="juris-card district">
+          <div class="juris-amount">Up to ₹50 Lakh</div>
+          <div class="juris-label">District Consumer Forum</div>
+          <div class="juris-court">DCDRC — most common</div>
+        </div>
+        <div class="juris-card state">
+          <div class="juris-amount">₹50L – ₹2 Crore</div>
+          <div class="juris-label">State Consumer Commission</div>
+          <div class="juris-court">SCDRC — state level</div>
+        </div>
+        <div class="juris-card national">
+          <div class="juris-amount">Above ₹2 Crore</div>
+          <div class="juris-label">National Commission</div>
+          <div class="juris-court">NCDRC — New Delhi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NATIONAL COMMISSION -->
+    <div class="ncdrc-card">
+      <div class="ncdrc-icon">🏛️</div>
+      <div style="flex:1">
+        <div class="ncdrc-label">National Authority</div>
+        <div class="ncdrc-name">National Consumer Disputes Redressal Commission (NCDRC)</div>
+        <div class="ncdrc-detail">
+          <strong>Address:</strong> Upbhokta Nyay Bhawan, F-Block, GPO Complex, INA, New Delhi – 110023<br>
+          <strong>Phone:</strong> 011-24608801, 011-24608802<br>
+          <strong>Email:</strong> ncdrc-india@nic.in<br>
+          <strong>Website:</strong> ncdrc.nic.in<br>
+          <strong>Jurisdiction:</strong> Complaints above ₹2 Crore | Appeals from State Commissions
+        </div>
+        <div class="ncdrc-actions">
+          <button class="btn-copy" onclick="copyText('Upbhokta Nyay Bhawan, F-Block, GPO Complex, INA, New Delhi – 110023', this)">📋 Copy Address</button>
+          <a class="btn-maps" href="https://maps.google.com/?q=NCDRC+INA+New+Delhi" target="_blank">🗺️ Maps</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <span class="search-ic">🔍</span>
+        <input class="search-input" id="search-input" placeholder="Search by city, district or forum name..." oninput="filterForums()"/>
+      </div>
+      <select class="state-select" id="state-select" onchange="filterForums()">
+        <option value="">All States & UTs</option>
+      </select>
+      <div class="type-pills">
+        <button class="pill active" onclick="setType('all',this)">All</button>
+        <button class="pill" onclick="setType('district',this)">District Forum</button>
+        <button class="pill" onclick="setType('state-comm',this)">State Commission</button>
+        <button class="pill" onclick="setType('labour',this)">Labour Court</button>
+        <button class="pill" onclick="setType('high-court',this)">High Court</button>
+      </div>
+    </div>
+
+    <div class="results-info" id="results-info"></div>
+    <div class="forums-grid" id="forums-grid"></div>
+
+  </div>
+</main>
+
+<script>
+  // ── THEME ──
+  const html = document.documentElement;
+  const tBtn = document.getElementById('themeBtn');
+  const savedTheme = localStorage.getItem('nyaai-theme') || 'dark';
+  applyTheme(savedTheme);
+  function applyTheme(t) {
+    html.setAttribute('data-theme', t);
+    tBtn.textContent = t === 'dark' ? '☀️' : '🌙';
+    localStorage.setItem('nyaai-theme', t);
+  }
+  tBtn.addEventListener('click', () => applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+
+  // ── AUTH ──
+  const token = localStorage.getItem('access_token');
+  const user  = JSON.parse(localStorage.getItem('user') || '{}');
+  if (!token) { window.location.href = '/'; }
+  else {
+    const name = user.name || user.username || 'User';
+    document.getElementById('sidebar-name').textContent = name;
+    document.getElementById('sidebar-avatar').textContent = name.charAt(0).toUpperCase();
+  }
+
+  // ── TOAST ──
+  let toastTimer;
+  function showToast(msg, type = 'info') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ── COPY TEXT ──
+  function copyText(text, btn) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✅ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 2000);
+      showToast('Address copied!', 'success');
+    });
+  }
+
+  // ── FORUM DATA ──
+  const FORUMS = [
+    // ── ANDHRA PRADESH ──
+    {state:'Andhra Pradesh', name:'DCDRC Visakhapatnam', type:'district', city:'Visakhapatnam', address:'District Consumer Disputes Redressal Commission, Court Complex, Visakhapatnam – 530001', phone:'0891-2564826', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Andhra Pradesh', name:'DCDRC Vijayawada', type:'district', city:'Vijayawada', address:'District Consumer Disputes Redressal Commission, Krishna District Court Complex, Vijayawada – 520001', phone:'0866-2431821', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Andhra Pradesh', name:'DCDRC Guntur', type:'district', city:'Guntur', address:'District Consumer Disputes Redressal Commission, Court Complex, Guntur – 522001', phone:'0863-2226789', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Andhra Pradesh', name:'Andhra Pradesh State Consumer Commission', type:'state-comm', city:'Amaravati', address:'State Consumer Disputes Redressal Commission, High Court Buildings, Amaravati – 522020', phone:'0863-2346001', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Andhra Pradesh', name:'High Court of Andhra Pradesh', type:'high-court', city:'Amaravati', address:'High Court of Andhra Pradesh, Nelapadu, Amaravati – 522020', phone:'0863-2346200', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Andhra Pradesh', name:'Labour Court Visakhapatnam', type:'labour', city:'Visakhapatnam', address:'Labour Court, Visakhapatnam – 530003', phone:'0891-2756123', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── ARUNACHAL PRADESH ──
+    {state:'Arunachal Pradesh', name:'DCDRC Itanagar', type:'district', city:'Itanagar', address:'District Consumer Disputes Redressal Commission, Civil Secretariat Campus, Itanagar – 791111', phone:'0360-2212345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Arunachal Pradesh', name:'Arunachal Pradesh State Consumer Commission', type:'state-comm', city:'Itanagar', address:'State Consumer Disputes Redressal Commission, Itanagar – 791111', phone:'0360-2212567', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+
+    // ── ASSAM ──
+    {state:'Assam', name:'DCDRC Guwahati', type:'district', city:'Guwahati', address:'District Consumer Disputes Redressal Commission, Assam Sachivalaya Campus, Guwahati – 781006', phone:'0361-2237456', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Assam', name:'DCDRC Dibrugarh', type:'district', city:'Dibrugarh', address:'District Consumer Disputes Redressal Commission, Court Road, Dibrugarh – 786001', phone:'0373-2320123', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Assam', name:'Assam State Consumer Commission', type:'state-comm', city:'Guwahati', address:'State Consumer Disputes Redressal Commission, Assam Sachivalaya, Dispur, Guwahati – 781006', phone:'0361-2237890', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Assam', name:'Gauhati High Court', type:'high-court', city:'Guwahati', address:'Gauhati High Court, A.T. Road, Guwahati – 781001', phone:'0361-2731650', jurisdiction:'Appeals & Writ Petitions'},
+
+    // ── BIHAR ──
+    {state:'Bihar', name:'DCDRC Patna', type:'district', city:'Patna', address:'District Consumer Disputes Redressal Commission, Bailey Road, Patna – 800001', phone:'0612-2217543', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Bihar', name:'DCDRC Muzaffarpur', type:'district', city:'Muzaffarpur', address:'District Consumer Disputes Redressal Commission, Court Compound, Muzaffarpur – 842001', phone:'0621-2242345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Bihar', name:'Bihar State Consumer Commission', type:'state-comm', city:'Patna', address:'State Consumer Disputes Redressal Commission, Vikas Bhawan, Bailey Road, Patna – 800001', phone:'0612-2215678', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Bihar', name:'Patna High Court', type:'high-court', city:'Patna', address:'Patna High Court, Patna – 800001', phone:'0612-2232626', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Bihar', name:'Labour Court Patna', type:'labour', city:'Patna', address:'Labour Court, Frazer Road, Patna – 800001', phone:'0612-2223456', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── CHHATTISGARH ──
+    {state:'Chhattisgarh', name:'DCDRC Raipur', type:'district', city:'Raipur', address:'District Consumer Disputes Redressal Commission, Civil Lines, Raipur – 492001', phone:'0771-2445678', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Chhattisgarh', name:'DCDRC Bilaspur', type:'district', city:'Bilaspur', address:'District Consumer Disputes Redressal Commission, Court Road, Bilaspur – 495001', phone:'07752-412345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Chhattisgarh', name:'Chhattisgarh State Consumer Commission', type:'state-comm', city:'Raipur', address:'State Consumer Disputes Redressal Commission, Mantralaya, Raipur – 492001', phone:'0771-2221234', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Chhattisgarh', name:'High Court of Chhattisgarh', type:'high-court', city:'Bilaspur', address:'High Court of Chhattisgarh, Bilaspur – 495001', phone:'07752-401234', jurisdiction:'Appeals & Writ Petitions'},
+
+    // ── GOA ──
+    {state:'Goa', name:'DCDRC North Goa (Panaji)', type:'district', city:'Panaji', address:'District Consumer Disputes Redressal Commission, EDC House, Panaji – 403001', phone:'0832-2425678', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Goa', name:'DCDRC South Goa (Margao)', type:'district', city:'Margao', address:'District Consumer Disputes Redressal Commission, Collector Office Complex, Margao – 403601', phone:'0832-2712345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Goa', name:'Goa State Consumer Commission', type:'state-comm', city:'Panaji', address:'State Consumer Disputes Redressal Commission, Panaji – 403001', phone:'0832-2224567', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+
+    // ── GUJARAT ──
+    {state:'Gujarat', name:'DCDRC Ahmedabad', type:'district', city:'Ahmedabad', address:'District Consumer Disputes Redressal Commission, Nr. Lal Darwaja, Ahmedabad – 380001', phone:'079-25506789', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Gujarat', name:'DCDRC Surat', type:'district', city:'Surat', address:'District Consumer Disputes Redressal Commission, Ring Road, Surat – 395002', phone:'0261-2467890', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Gujarat', name:'DCDRC Vadodara', type:'district', city:'Vadodara', address:'District Consumer Disputes Redressal Commission, RC Dutt Road, Vadodara – 390007', phone:'0265-2312345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Gujarat', name:'DCDRC Rajkot', type:'district', city:'Rajkot', address:'District Consumer Disputes Redressal Commission, Rajkot – 360001', phone:'0281-2456789', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Gujarat', name:'Gujarat State Consumer Commission', type:'state-comm', city:'Ahmedabad', address:'State Consumer Disputes Redressal Commission, Block No. 16, New Sachivalaya, Gandhinagar – 382010', phone:'079-23254567', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Gujarat', name:'Gujarat High Court', type:'high-court', city:'Ahmedabad', address:'Gujarat High Court, Sola, Ahmedabad – 380060', phone:'079-27541234', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Gujarat', name:'Labour Court Ahmedabad', type:'labour', city:'Ahmedabad', address:'Labour Court, Naranpura, Ahmedabad – 380013', phone:'079-27562345', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── HARYANA ──
+    {state:'Haryana', name:'DCDRC Chandigarh (Haryana)', type:'district', city:'Chandigarh', address:'District Consumer Disputes Redressal Commission, Sector 17, Chandigarh – 160017', phone:'0172-2745678', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Haryana', name:'DCDRC Gurugram', type:'district', city:'Gurugram', address:'District Consumer Disputes Redressal Commission, Mini Secretariat, Sector 12, Gurugram – 122001', phone:'0124-2326789', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Haryana', name:'DCDRC Faridabad', type:'district', city:'Faridabad', address:'District Consumer Disputes Redressal Commission, Sector 12, Faridabad – 121007', phone:'0129-2423456', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Haryana', name:'DCDRC Ambala', type:'district', city:'Ambala', address:'District Consumer Disputes Redressal Commission, DC Office, Ambala – 134003', phone:'0171-2534567', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Haryana', name:'Haryana State Consumer Commission', type:'state-comm', city:'Panchkula', address:'State Consumer Disputes Redressal Commission, Bays 1–4, Sector 7, Panchkula – 134109', phone:'0172-2585678', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Haryana', name:'Labour Court Chandigarh (Haryana)', type:'labour', city:'Chandigarh', address:'Labour Court, Sector 17, Chandigarh – 160017', phone:'0172-2708901', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── HIMACHAL PRADESH ──
+    {state:'Himachal Pradesh', name:'DCDRC Shimla', type:'district', city:'Shimla', address:'District Consumer Disputes Redressal Commission, Chhota Shimla, Shimla – 171002', phone:'0177-2623456', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Himachal Pradesh', name:'HP State Consumer Commission', type:'state-comm', city:'Shimla', address:'State Consumer Disputes Redressal Commission, Himachal Pradesh Secretariat, Shimla – 171002', phone:'0177-2621234', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Himachal Pradesh', name:'Himachal Pradesh High Court', type:'high-court', city:'Shimla', address:'High Court of Himachal Pradesh, Ravenswood, Shimla – 171001', phone:'0177-2629000', jurisdiction:'Appeals & Writ Petitions'},
+
+    // ── JHARKHAND ──
+    {state:'Jharkhand', name:'DCDRC Ranchi', type:'district', city:'Ranchi', address:'District Consumer Disputes Redressal Commission, Kutchery Road, Ranchi – 834001', phone:'0651-2330123', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Jharkhand', name:'DCDRC Jamshedpur', type:'district', city:'Jamshedpur', address:'District Consumer Disputes Redressal Commission, Bistupur, Jamshedpur – 831001', phone:'0657-2430456', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Jharkhand', name:'Jharkhand State Consumer Commission', type:'state-comm', city:'Ranchi', address:'State Consumer Disputes Redressal Commission, Doranda, Ranchi – 834002', phone:'0651-2480123', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Jharkhand', name:'Jharkhand High Court', type:'high-court', city:'Ranchi', address:'High Court of Jharkhand, H.E.C. Townside, Ranchi – 834002', phone:'0651-2480000', jurisdiction:'Appeals & Writ Petitions'},
+
+    // ── KARNATAKA ──
+    {state:'Karnataka', name:'DCDRC Bengaluru Urban', type:'district', city:'Bengaluru', address:'District Consumer Disputes Redressal Commission, Cauvery Bhavan, K.G. Road, Bengaluru – 560009', phone:'080-22251234', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Karnataka', name:'DCDRC Mysuru', type:'district', city:'Mysuru', address:'District Consumer Disputes Redressal Commission, DC Office Complex, Mysuru – 570011', phone:'0821-2423456', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Karnataka', name:'DCDRC Hubballi-Dharwad', type:'district', city:'Hubballi', address:'District Consumer Disputes Redressal Commission, DC Office, Hubballi – 580020', phone:'0836-2263456', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Karnataka', name:'Karnataka State Consumer Commission', type:'state-comm', city:'Bengaluru', address:'State Consumer Disputes Redressal Commission, 3rd Floor, Cauvery Bhavan, K.G. Road, Bengaluru – 560009', phone:'080-22281234', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Karnataka', name:'High Court of Karnataka', type:'high-court', city:'Bengaluru', address:'High Court of Karnataka, High Court Road, Bengaluru – 560001', phone:'080-22451234', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Karnataka', name:'Labour Court Bengaluru', type:'labour', city:'Bengaluru', address:'Principal Labour Court, Sheshadri Road, Bengaluru – 560001', phone:'080-22251890', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── KERALA ──
+    {state:'Kerala', name:'DCDRC Thiruvananthapuram', type:'district', city:'Thiruvananthapuram', address:'District Consumer Disputes Redressal Commission, Statue Junction, Thiruvananthapuram – 695001', phone:'0471-2323456', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Kerala', name:'DCDRC Ernakulam (Kochi)', type:'district', city:'Kochi', address:'District Consumer Disputes Redressal Commission, High Court Road, Ernakulam – 682031', phone:'0484-2394567', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Kerala', name:'DCDRC Kozhikode', type:'district', city:'Kozhikode', address:'District Consumer Disputes Redressal Commission, Mananchira, Kozhikode – 673001', phone:'0495-2723456', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Kerala', name:'Kerala State Consumer Commission', type:'state-comm', city:'Thiruvananthapuram', address:'State Consumer Disputes Redressal Commission, TRIDA Building, Thiruvananthapuram – 695001', phone:'0471-2320123', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Kerala', name:'Kerala High Court', type:'high-court', city:'Kochi', address:'High Court of Kerala, High Court Road, Ernakulam, Kochi – 682031', phone:'0484-2391234', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Kerala', name:'Labour Court Ernakulam', type:'labour', city:'Kochi', address:'Labour Court, Ernakulam, Kochi – 682031', phone:'0484-2394890', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── MADHYA PRADESH ──
+    {state:'Madhya Pradesh', name:'DCDRC Bhopal', type:'district', city:'Bhopal', address:'District Consumer Disputes Redressal Commission, 6 Arera Hills, Bhopal – 462011', phone:'0755-2551234', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Madhya Pradesh', name:'DCDRC Indore', type:'district', city:'Indore', address:'District Consumer Disputes Redressal Commission, 14/1 Civil Lines, Indore – 452001', phone:'0731-2532345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Madhya Pradesh', name:'DCDRC Jabalpur', type:'district', city:'Jabalpur', address:'District Consumer Disputes Redressal Commission, Civil Lines, Jabalpur – 482001', phone:'0761-2623456', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Madhya Pradesh', name:'MP State Consumer Commission', type:'state-comm', city:'Bhopal', address:'State Consumer Disputes Redressal Commission, 6 Arera Hills, Bhopal – 462011', phone:'0755-2558901', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Madhya Pradesh', name:'High Court of Madhya Pradesh', type:'high-court', city:'Jabalpur', address:'High Court of Madhya Pradesh, High Court Road, Jabalpur – 482001', phone:'0761-2620000', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Madhya Pradesh', name:'Labour Court Bhopal', type:'labour', city:'Bhopal', address:'Labour Court, Bhopal – 462001', phone:'0755-2554321', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── MAHARASHTRA ──
+    {state:'Maharashtra', name:'DCDRC Mumbai City', type:'district', city:'Mumbai', address:'District Consumer Disputes Redressal Commission, Old Custom House Building, Shahid Bhagat Singh Road, Fort, Mumbai – 400001', phone:'022-22694567', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Maharashtra', name:'DCDRC Mumbai Suburban', type:'district', city:'Mumbai', address:'District Consumer Disputes Redressal Commission, Bandra-Kurla Complex, Bandra East, Mumbai – 400051', phone:'022-26594567', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Maharashtra', name:'DCDRC Pune', type:'district', city:'Pune', address:'District Consumer Disputes Redressal Commission, Collector Office Campus, Pune – 411001', phone:'020-26122345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Maharashtra', name:'DCDRC Nashik', type:'district', city:'Nashik', address:'District Consumer Disputes Redressal Commission, Nashik – 422001', phone:'0253-2312345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Maharashtra', name:'DCDRC Nagpur', type:'district', city:'Nagpur', address:'District Consumer Disputes Redressal Commission, Civil Lines, Nagpur – 440001', phone:'0712-2562345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Maharashtra', name:'Maharashtra State Consumer Commission', type:'state-comm', city:'Mumbai', address:'State Consumer Disputes Redressal Commission, New Administrative Building, Government Colony, Bandra East, Mumbai – 400051', phone:'022-26592345', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Maharashtra', name:'Bombay High Court', type:'high-court', city:'Mumbai', address:'Bombay High Court, Dr. Annie Besant Road, Churchgate, Mumbai – 400032', phone:'022-22671234', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Maharashtra', name:'Labour Court Mumbai', type:'labour', city:'Mumbai', address:'Labour Court, Ballard Estate, Mumbai – 400001', phone:'022-22614567', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── MANIPUR ──
+    {state:'Manipur', name:'DCDRC Imphal', type:'district', city:'Imphal', address:'District Consumer Disputes Redressal Commission, Babupara, Imphal – 795001', phone:'0385-2440123', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Manipur', name:'Manipur State Consumer Commission', type:'state-comm', city:'Imphal', address:'State Consumer Disputes Redressal Commission, Imphal – 795001', phone:'0385-2441234', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+
+    // ── MEGHALAYA ──
+    {state:'Meghalaya', name:'DCDRC East Khasi Hills (Shillong)', type:'district', city:'Shillong', address:'District Consumer Disputes Redressal Commission, Shillong – 793001', phone:'0364-2502345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Meghalaya', name:'Meghalaya State Consumer Commission', type:'state-comm', city:'Shillong', address:'State Consumer Disputes Redressal Commission, Shillong – 793001', phone:'0364-2503456', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+
+    // ── ODISHA ──
+    {state:'Odisha', name:'DCDRC Bhubaneswar', type:'district', city:'Bhubaneswar', address:'District Consumer Disputes Redressal Commission, Unit – 5, Bhubaneswar – 751001', phone:'0674-2392345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Odisha', name:'DCDRC Cuttack', type:'district', city:'Cuttack', address:'District Consumer Disputes Redressal Commission, Cuttack – 753001', phone:'0671-2612345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Odisha', name:'Odisha State Consumer Commission', type:'state-comm', city:'Cuttack', address:'State Consumer Disputes Redressal Commission, Cuttack – 753001', phone:'0671-2614567', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Odisha', name:'Orissa High Court', type:'high-court', city:'Cuttack', address:'High Court of Orissa, High Court Road, Cuttack – 753002', phone:'0671-2304000', jurisdiction:'Appeals & Writ Petitions'},
+
+    // ── PUNJAB ──
+    {state:'Punjab', name:'DCDRC Ludhiana', type:'district', city:'Ludhiana', address:'District Consumer Disputes Redressal Commission, Court Complex, Ferozepur Road, Ludhiana – 141001', phone:'0161-2445678', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Punjab', name:'DCDRC Amritsar', type:'district', city:'Amritsar', address:'District Consumer Disputes Redressal Commission, Court Road, Amritsar – 143001', phone:'0183-2562345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Punjab', name:'DCDRC Jalandhar', type:'district', city:'Jalandhar', address:'District Consumer Disputes Redressal Commission, District Courts, Jalandhar – 144001', phone:'0181-2454567', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Punjab', name:'DCDRC Patiala', type:'district', city:'Patiala', address:'District Consumer Disputes Redressal Commission, Leela Bhawan, Patiala – 147001', phone:'0175-2312345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Punjab', name:'Punjab State Consumer Commission', type:'state-comm', city:'Chandigarh', address:'State Consumer Disputes Redressal Commission, Sector 37-A, Chandigarh – 160036', phone:'0172-2694567', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Punjab', name:'Punjab and Haryana High Court', type:'high-court', city:'Chandigarh', address:'Punjab and Haryana High Court, Sector 1, Chandigarh – 160001', phone:'0172-2740000', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Punjab', name:'Labour Court Ludhiana', type:'labour', city:'Ludhiana', address:'Labour Court, Ferozepur Road, Ludhiana – 141001', phone:'0161-2441234', jurisdiction:'Labour & Employment Disputes'},
+    {state:'Punjab', name:'Labour Court Jalandhar', type:'labour', city:'Jalandhar', address:'Labour Court, Nakodar Road, Jalandhar – 144001', phone:'0181-2456789', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── RAJASTHAN ──
+    {state:'Rajasthan', name:'DCDRC Jaipur', type:'district', city:'Jaipur', address:'District Consumer Disputes Redressal Commission, Jaipur – 302001', phone:'0141-2225678', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Rajasthan', name:'DCDRC Jodhpur', type:'district', city:'Jodhpur', address:'District Consumer Disputes Redressal Commission, Jodhpur – 342001', phone:'0291-2636789', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Rajasthan', name:'DCDRC Udaipur', type:'district', city:'Udaipur', address:'District Consumer Disputes Redressal Commission, Udaipur – 313001', phone:'0294-2412345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Rajasthan', name:'Rajasthan State Consumer Commission', type:'state-comm', city:'Jaipur', address:'State Consumer Disputes Redressal Commission, Jaipur – 302001', phone:'0141-2220123', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Rajasthan', name:'Rajasthan High Court', type:'high-court', city:'Jodhpur', address:'High Court of Rajasthan, High Court Campus, Jodhpur – 342001', phone:'0291-2434000', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Rajasthan', name:'Labour Court Jaipur', type:'labour', city:'Jaipur', address:'Labour Court, Jawahar Nagar, Jaipur – 302004', phone:'0141-2226789', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── TAMIL NADU ──
+    {state:'Tamil Nadu', name:'DCDRC Chennai', type:'district', city:'Chennai', address:'District Consumer Disputes Redressal Commission, Singaravelar Maligai, Rajaji Salai, Chennai – 600001', phone:'044-25272345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Tamil Nadu', name:'DCDRC Coimbatore', type:'district', city:'Coimbatore', address:'District Consumer Disputes Redressal Commission, Collectorate Campus, Coimbatore – 641018', phone:'0422-2393456', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Tamil Nadu', name:'DCDRC Madurai', type:'district', city:'Madurai', address:'District Consumer Disputes Redressal Commission, Collectorate, Madurai – 625009', phone:'0452-2532345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Tamil Nadu', name:'DCDRC Salem', type:'district', city:'Salem', address:'District Consumer Disputes Redressal Commission, Collectorate Campus, Salem – 636007', phone:'0427-2411234', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Tamil Nadu', name:'Tamil Nadu State Consumer Commission', type:'state-comm', city:'Chennai', address:'State Consumer Disputes Redressal Commission, 3rd Floor, Tower II, SIDCO Complex, Guindy, Chennai – 600032', phone:'044-22505678', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Tamil Nadu', name:'Madras High Court', type:'high-court', city:'Chennai', address:'High Court of Judicature at Madras, High Court Road, Chennai – 600104', phone:'044-25301234', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Tamil Nadu', name:'Labour Court Chennai', type:'labour', city:'Chennai', address:'Labour Court, 100 Feet Road, Alandur, Chennai – 600016', phone:'044-22432345', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── TELANGANA ──
+    {state:'Telangana', name:'DCDRC Hyderabad', type:'district', city:'Hyderabad', address:'District Consumer Disputes Redressal Commission, Nampally, Hyderabad – 500001', phone:'040-24601234', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Telangana', name:'DCDRC Ranga Reddy', type:'district', city:'Hyderabad', address:'District Consumer Disputes Redressal Commission, Ranga Reddy, Hyderabad – 500075', phone:'040-24001234', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Telangana', name:'DCDRC Warangal', type:'district', city:'Warangal', address:'District Consumer Disputes Redressal Commission, Warangal – 506001', phone:'0870-2578901', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Telangana', name:'Telangana State Consumer Commission', type:'state-comm', city:'Hyderabad', address:'State Consumer Disputes Redressal Commission, Nampally, Hyderabad – 500001', phone:'040-23456789', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Telangana', name:'Telangana High Court', type:'high-court', city:'Hyderabad', address:'High Court for the State of Telangana, Nayapul, Hyderabad – 500001', phone:'040-23454321', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Telangana', name:'Labour Court Hyderabad', type:'labour', city:'Hyderabad', address:'Labour Court, Nampally, Hyderabad – 500001', phone:'040-24601890', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── UTTAR PRADESH ──
+    {state:'Uttar Pradesh', name:'DCDRC Lucknow', type:'district', city:'Lucknow', address:'District Consumer Disputes Redressal Commission, Kaiserbagh, Lucknow – 226001', phone:'0522-2235678', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Uttar Pradesh', name:'DCDRC Kanpur', type:'district', city:'Kanpur', address:'District Consumer Disputes Redressal Commission, Kanpur – 208001', phone:'0512-2312345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Uttar Pradesh', name:'DCDRC Agra', type:'district', city:'Agra', address:'District Consumer Disputes Redressal Commission, Collectorate, Agra – 282001', phone:'0562-2464567', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Uttar Pradesh', name:'DCDRC Varanasi', type:'district', city:'Varanasi', address:'District Consumer Disputes Redressal Commission, Varanasi – 221001', phone:'0542-2501234', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Uttar Pradesh', name:'DCDRC Noida (Gautam Buddha Nagar)', type:'district', city:'Noida', address:'District Consumer Disputes Redressal Commission, Surajpur, Greater Noida – 201306', phone:'0120-2326789', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Uttar Pradesh', name:'DCDRC Meerut', type:'district', city:'Meerut', address:'District Consumer Disputes Redressal Commission, Meerut – 250001', phone:'0121-2765432', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Uttar Pradesh', name:'UP State Consumer Commission', type:'state-comm', city:'Lucknow', address:'State Consumer Disputes Redressal Commission, 2nd Floor, Udyog Bhawan, Lucknow – 226001', phone:'0522-2239876', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Uttar Pradesh', name:'Allahabad High Court', type:'high-court', city:'Prayagraj', address:'High Court of Judicature at Allahabad, High Court Road, Prayagraj – 211001', phone:'0532-2644000', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Uttar Pradesh', name:'Labour Court Lucknow', type:'labour', city:'Lucknow', address:'Labour Court, Vikas Bhawan, Lucknow – 226001', phone:'0522-2231234', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── UTTARAKHAND ──
+    {state:'Uttarakhand', name:'DCDRC Dehradun', type:'district', city:'Dehradun', address:'District Consumer Disputes Redressal Commission, Rispana, Dehradun – 248001', phone:'0135-2713456', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Uttarakhand', name:'Uttarakhand State Consumer Commission', type:'state-comm', city:'Dehradun', address:'State Consumer Disputes Redressal Commission, Dehradun – 248001', phone:'0135-2714567', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Uttarakhand', name:'Uttarakhand High Court', type:'high-court', city:'Nainital', address:'High Court of Uttarakhand, Nainital – 263001', phone:'05942-235000', jurisdiction:'Appeals & Writ Petitions'},
+
+    // ── WEST BENGAL ──
+    {state:'West Bengal', name:'DCDRC Kolkata', type:'district', city:'Kolkata', address:'District Consumer Disputes Redressal Commission, 11A, Mirza Galib Street, Kolkata – 700087', phone:'033-22121234', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'West Bengal', name:'DCDRC Howrah', type:'district', city:'Howrah', address:'District Consumer Disputes Redressal Commission, Howrah – 711101', phone:'033-26381234', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'West Bengal', name:'DCDRC Durgapur (Paschim Bardhaman)', type:'district', city:'Durgapur', address:'District Consumer Disputes Redressal Commission, Asansol-Durgapur Development Authority Area, Durgapur – 713204', phone:'0343-2532345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'West Bengal', name:'West Bengal State Consumer Commission', type:'state-comm', city:'Kolkata', address:'State Consumer Disputes Redressal Commission, Bidhan Nagar, Salt Lake, Kolkata – 700091', phone:'033-23371234', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'West Bengal', name:'Calcutta High Court', type:'high-court', city:'Kolkata', address:'High Court at Calcutta, High Court Building, 1 Esplanade Row West, Kolkata – 700001', phone:'033-22431234', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'West Bengal', name:'Labour Court Kolkata', type:'labour', city:'Kolkata', address:'Labour Court, 2A, Hare Street, Kolkata – 700001', phone:'033-22314567', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── DELHI ──
+    {state:'Delhi', name:'DCDRC Central Delhi', type:'district', city:'Delhi', address:'District Consumer Disputes Redressal Commission, Civic Centre, Jhandewalan Extension, New Delhi – 110002', phone:'011-23379012', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Delhi', name:'DCDRC North Delhi', type:'district', city:'Delhi', address:'District Consumer Disputes Redressal Commission, Delhi – 110054', phone:'011-23960123', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Delhi', name:'DCDRC South Delhi', type:'district', city:'Delhi', address:'District Consumer Disputes Redressal Commission, Saket, New Delhi – 110017', phone:'011-26862345', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Delhi', name:'DCDRC West Delhi (Janakpuri)', type:'district', city:'Delhi', address:'District Consumer Disputes Redressal Commission, Janakpuri, New Delhi – 110058', phone:'011-28521234', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Delhi', name:'DCDRC East Delhi (Karkardooma)', type:'district', city:'Delhi', address:'District Consumer Disputes Redressal Commission, Karkardooma, Delhi – 110032', phone:'011-22370123', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Delhi', name:'Delhi State Consumer Commission', type:'state-comm', city:'Delhi', address:'State Consumer Disputes Redressal Commission, Block-F, VIIth Floor, Delhi IFCI Tower, 61 Nehru Place, New Delhi – 110019', phone:'011-26447900', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Delhi', name:'Delhi High Court', type:'high-court', city:'Delhi', address:'High Court of Delhi, Sher Shah Road, New Delhi – 110003', phone:'011-23384000', jurisdiction:'Appeals & Writ Petitions'},
+    {state:'Delhi', name:'Labour Court Karkardooma', type:'labour', city:'Delhi', address:'Labour Courts, Karkardooma, Delhi – 110032', phone:'011-22375678', jurisdiction:'Labour & Employment Disputes'},
+    {state:'Delhi', name:'Labour Court Rouse Avenue', type:'labour', city:'Delhi', address:'Labour Court, Rouse Avenue, New Delhi – 110002', phone:'011-23385678', jurisdiction:'Labour & Employment Disputes'},
+
+    // ── CHANDIGARH ──
+    {state:'Chandigarh', name:'DCDRC Chandigarh (UT)', type:'district', city:'Chandigarh', address:'District Consumer Disputes Redressal Commission, Sector 17, Chandigarh – 160017', phone:'0172-2745678', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Chandigarh', name:'Chandigarh UT State Commission', type:'state-comm', city:'Chandigarh', address:'State Consumer Disputes Redressal Commission, Sector 17-E, Chandigarh – 160017', phone:'0172-2748901', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+
+    // ── JAMMU & KASHMIR ──
+    {state:'Jammu & Kashmir', name:'DCDRC Srinagar', type:'district', city:'Srinagar', address:'District Consumer Disputes Redressal Commission, Biscoe Road, Srinagar – 190001', phone:'0194-2476543', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Jammu & Kashmir', name:'DCDRC Jammu', type:'district', city:'Jammu', address:'District Consumer Disputes Redressal Commission, Residency Road, Jammu – 180001', phone:'0191-2479876', jurisdiction:'Complaints up to ₹50 Lakh'},
+    {state:'Jammu & Kashmir', name:'J&K State Consumer Commission', type:'state-comm', city:'Jammu', address:'State Consumer Disputes Redressal Commission, New Secretariat Complex, Jammu – 180001', phone:'0191-2472345', jurisdiction:'₹50 Lakh to ₹2 Crore'},
+    {state:'Jammu & Kashmir', name:'J&K High Court', type:'high-court', city:'Srinagar', address:'High Court of Jammu & Kashmir and Ladakh, Biscoe Road, Srinagar – 190001', phone:'0194-2476000', jurisdiction:'Appeals & Writ Petitions'},
+  ];
+
+  // ── POPULATE STATE DROPDOWN ──
+  const states = [...new Set(FORUMS.map(f => f.state))].sort();
+  const sel = document.getElementById('state-select');
+  states.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    sel.appendChild(opt);
+  });
+
+  // ── AUTO SELECT USER'S STATE FROM PROFILE ──
+  async function tryAutoSelectState() {
+    try {
+      const res = await fetch('/api/auth/profile/', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const d = await res.json();
+      if (d.success && d.profile.state_name && d.profile.state_name !== 'Not set') {
+        const stateName = d.profile.state_name;
+        const match = states.find(s => s.toLowerCase().includes(stateName.toLowerCase().split(' ')[0]));
+        if (match) {
+          document.getElementById('state-select').value = match;
+          filterForums();
+        }
+      }
+    } catch(e) {}
+  }
+
+  // ── FILTER STATE ──
+  let currentType = 'all';
+
+  function setType(type, btn) {
+    currentType = type;
+    document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    filterForums();
+  }
+
+  function filterForums() {
+    const search = document.getElementById('search-input').value.toLowerCase();
+    const state  = document.getElementById('state-select').value;
+
+    const filtered = FORUMS.filter(f => {
+      const matchState  = !state || f.state === state;
+      const matchType   = currentType === 'all' || f.type === currentType;
+      const matchSearch = !search ||
+        f.name.toLowerCase().includes(search) ||
+        f.city.toLowerCase().includes(search) ||
+        f.state.toLowerCase().includes(search) ||
+        f.address.toLowerCase().includes(search);
+      return matchState && matchType && matchSearch;
+    });
+
+    renderForums(filtered);
+  }
+
+  // ── TYPE CONFIG ──
+  const TYPE_LABELS = {
+    'district':   {label:'District Consumer Forum', icon:'🏛️', cls:'district'},
+    'state-comm': {label:'State Commission',        icon:'⚖️', cls:'state-comm'},
+    'labour':     {label:'Labour Court',            icon:'👷', cls:'labour'},
+    'high-court': {label:'High Court',              icon:'🔨', cls:'high-court'},
+  };
+
+  function renderForums(list) {
+    const grid = document.getElementById('forums-grid');
+    const info = document.getElementById('results-info');
+    info.innerHTML = `Showing <span>${list.length}</span> forum${list.length !== 1 ? 's' : ''}`;
+
+    if (list.length === 0) {
+      grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+          <div class="empty-icon">🏛️</div>
+          <div class="empty-title">No forums found</div>
+          <div class="empty-sub">Try a different state or search term</div>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = list.map(f => {
+      const t = TYPE_LABELS[f.type] || {label:f.type, icon:'🏛️', cls:'district'};
+      const mapsQuery = encodeURIComponent(f.name + ' ' + f.city);
+      return `
+        <div class="forum-card">
+          <div class="fc-top">
+            <div class="fc-icon ${t.cls}">${t.icon}</div>
+            <div>
+              <span class="fc-type-badge ${t.cls}">${t.label}</span>
+              <div class="fc-name">${f.name}</div>
+              <div class="fc-state">📍 ${f.city}, ${f.state}</div>
+            </div>
+          </div>
+          <div class="fc-divider"></div>
+          <div class="fc-detail">
+            <strong>Address:</strong> ${f.address}<br>
+            ${f.phone ? `<strong>Phone:</strong> ${f.phone}` : ''}
+          </div>
+          <div class="fc-jurisdiction">⚖️ ${f.jurisdiction}</div>
+          <div class="fc-actions">
+            <button class="btn-copy" onclick="copyText('${f.address.replace(/'/g,"\\'")}', this)">📋 Copy Address</button>
+            <a class="btn-maps" href="https://maps.google.com/?q=${mapsQuery}" target="_blank">🗺️ Maps</a>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── LOGOUT ──
+  function doLogout() {
+    const refresh = localStorage.getItem('refresh_token');
+    if (refresh) {
+      fetch('/api/auth/logout/', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+        body:JSON.stringify({refresh})
+      }).catch(()=>{});
+    }
+    localStorage.clear();
+    window.location.href = '/';
+  }
+
+  // ── INIT ──
+  filterForums();
+  tryAutoSelectState();
+</script>
+</body>
+</html>

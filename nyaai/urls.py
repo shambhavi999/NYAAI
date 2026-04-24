@@ -13,6 +13,7 @@ urlpatterns = [
     path('api/documents/', include('documents.urls')),
     path('case/<int:id>/', TemplateView.as_view(template_name='case_detail.html'), name='case_detail'),
     path('profile/', TemplateView.as_view(template_name='profile.html'), name='profile'),
+    path('forum/', TemplateView.as_view(template_name='forum.html'), name='forum'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
